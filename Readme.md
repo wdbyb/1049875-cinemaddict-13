@@ -1,7 +1,7 @@
 # Проект «Киноман» [![Build status][travis-image]][travis-url]
 
 * Студент: [Юрий Винивитин](https://up.htmlacademy.ru/ecmascript/13/user/1049875).
-* Наставник: `Неизвестно`.
+* Наставник: [Сергей Рожков](https://up.htmlacademy.ru/ecmascript/13/user/1069033).
 
 ---
 
