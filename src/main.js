@@ -6,6 +6,7 @@ import {createFilmCardTemplate} from "./view/film-card.js";
 import {createFilmsExtraContainerTemplate} from "./view/films-extra-container.js";
 import {createFilmDetailsTemplate} from "./view/film-details.js";
 import {createStatisticsTemplate} from "./view/statistics.js";
+import {generateTask} from "./mock/task.js";
 
 const MAX_CARD_COUNT = 5;
 const MAX_EXTRA_CARD_COUNT = 2;
