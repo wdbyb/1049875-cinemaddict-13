@@ -7,6 +7,7 @@ const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
+const YEARS = [];
 const DESCRIPTIONS = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget.`,
   `Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.`,
@@ -55,6 +56,10 @@ const StringCount = {
   MIN: 1,
   MAX: 5
 };
+const CommentCount = {
+  MIN: 0,
+  MAX: 5
+};
 
 const getArrayElement = (arr) => {
   const randomInteger = getRandomInteger(0, arr.length -1);
@@ -89,21 +94,31 @@ const generateDate = () => {
   return dayjs().add(daysGap, `day`).format(`YYYY/MM/DD HH:mm`);
 };
 
-const generateComment = () => {
-  return {
-    author: generateCommentAuthor(),
-    text: generateCommentText(),
-    emoji: generateCommentEmoji(),
-    date: generateCommentDate()
-  };
-};
-
 const generateCommentText = () => {
   return getArrayElement(COMMENTS);
 };
 
 const generateCommentDate = () => {
   return generateDate();
+};
+
+const generateRating = () => {
+  return getRandomInteger(1, 10);
+};
+
+const generateDuration = () => {
+  const hours = getRandomInteger(1, 3);
+  const minutes = getRandomInteger(0, 60);
+
+  return hours + `h ` + minutes + `m`;
+};
+
+const generateYear = () => {
+  for (let i = 0; i < 20; i++) {
+    YEARS.push(1970 + i);
+  }
+
+  return getArrayElement(YEARS);
 };
 
 const generateCommentAuthor = () => {
@@ -114,16 +129,40 @@ const generateCommentEmoji = () => {
   return getArrayElement(EMOJIS);
 };
 
-console.log(generateTask());
+const generateComments = () => {
+  const commentsCount = getRandomInteger(CommentCount.MIN, CommentCount.MAX);
+  let comments = [];
 
-export function generateTask() {
+  for (let i = 0; i < commentsCount; i++) {
+    comments.push({
+      author: generateCommentAuthor(),
+      text: generateCommentText(),
+      emoji: generateCommentEmoji(),
+      date: generateCommentDate()
+    });
+  }
+
+  return comments;
+};
+
+function generateTask() {
+  const comments = generateComments();
+
   return {
     title: generateTitle(),
     poster: generatePoster(),
+    rating: generateRating(),
+    duration: generateDuration(),
+    year: generateYear(),
     description: generateDescription(DESCRIPTIONS),
-    comments: {
-      id_1: generateComment(),
-      id_2: generateComment()
-    }
+    comments,
   };
 }
+
+const tasks = [];
+
+for (let i = 0; i < 20; i++) {
+  tasks.push(generateTask());
+}
+
+console.log(tasks);
