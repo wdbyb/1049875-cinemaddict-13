@@ -31,13 +31,13 @@ const TITLES = [
   `The Man with The Golden Arm`
 ];
 const POSTERS = [
-  `made-for-each-other.png`,
-  `popeye-meets-sinbad.png`,
-  `sagebrush-trail.jpg`,
-  `santa-claus-conquers-the-martians.jpg`,
-  `the-dance-of-life.jpg`,
-  `the-great-flamarion.jpg`,
-  `the-man-with-the-golden-arm.jpg`
+  `/images/posters/made-for-each-other.png`,
+  `/images/posters/popeye-meets-sinbad.png`,
+  `/images/posters/sagebrush-trail.jpg`,
+  `/images/posters/santa-claus-conquers-the-martians.jpg`,
+  `/images/posters/the-dance-of-life.jpg`,
+  `/images/posters/the-great-flamarion.jpg`,
+  `/images/posters/the-man-with-the-golden-arm.jpg`
 ];
 const AUTHORS = [
   `Johny`,
@@ -62,7 +62,7 @@ const CommentCount = {
 };
 
 const getArrayElement = (arr) => {
-  const randomInteger = getRandomInteger(0, arr.length -1);
+  const randomInteger = getRandomInteger(0, arr.length - 1);
   return arr[randomInteger];
 };
 
@@ -145,7 +145,7 @@ const generateComments = () => {
   return comments;
 };
 
-function generateTask() {
+export function generateTask() {
   const comments = generateComments();
 
   return {
@@ -158,11 +158,3 @@ function generateTask() {
     comments,
   };
 }
-
-const tasks = [];
-
-for (let i = 0; i < 20; i++) {
-  tasks.push(generateTask());
-}
-
-console.log(tasks);

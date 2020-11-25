@@ -11,11 +11,13 @@ import {generateTask} from "./mock/task.js";
 const MAX_CARD_COUNT = 5;
 const MAX_EXTRA_CARD_COUNT = 2;
 const EXTRA_LIST_COUNT = 2;
+const TASKS_COUNT = 20;
 const siteBodyElement = document.querySelector(`body`);
 const siteHeaderElement = siteBodyElement.querySelector(`.header`);
 const siteMainElement = siteBodyElement.querySelector(`.main`);
 const siteFooterElement = siteBodyElement.querySelector(`.footer`);
 const siteFooterStatisticsElement = siteFooterElement.querySelector(`.footer__statistics`);
+const tasks = new Array(TASKS_COUNT).fill().map(generateTask);
 
 function render(container, template, place) {
   container.insertAdjacentHTML(place, template);
@@ -31,7 +33,7 @@ const siteFilmsSectionElement = document.querySelector(`.films`);
 const filmsContainerElement = siteFilmsSectionElement.querySelector(`.films-list__container`);
 
 for (let i = 0; i < MAX_CARD_COUNT; i++) {
-  render(filmsContainerElement, createFilmCardTemplate(), `beforeend`);
+  render(filmsContainerElement, createFilmCardTemplate(tasks[i]), `beforeend`);
 }
 
 for (let i = 0; i < EXTRA_LIST_COUNT; i++) {
@@ -43,7 +45,7 @@ const filmsExtraContainerElements = siteFilmsSectionElement.querySelectorAll(`.f
 for (let i = 0; i < MAX_EXTRA_CARD_COUNT; i++) {
   let theContainer = filmsExtraContainerElements[i];
   for (let k = 0; k < MAX_EXTRA_CARD_COUNT; k++) {
-    render(theContainer.querySelector(`.films-list__container`), createFilmCardTemplate(), `beforeend`);
+    render(theContainer.querySelector(`.films-list__container`), createFilmCardTemplate(tasks[k]), `beforeend`);
   }
 }
 
