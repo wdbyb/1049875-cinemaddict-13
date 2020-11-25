@@ -49,7 +49,7 @@ for (let i = 0; i < MAX_EXTRA_CARD_COUNT; i++) {
   }
 }
 
-render(siteBodyElement, createFilmDetailsTemplate(), `beforeend`);
+render(siteBodyElement, createFilmDetailsTemplate(tasks[0]), `beforeend`);
 
 const siteFilmDetailsElement = document.querySelector(`.film-details`);
 const detailsCloseButtonElement = siteFilmDetailsElement.querySelector(`.film-details__close-btn`);

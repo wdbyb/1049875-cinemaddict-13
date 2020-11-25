@@ -103,7 +103,7 @@ const generateCommentDate = () => {
 };
 
 const generateRating = () => {
-  return getRandomInteger(1, 10);
+  return getRandomInteger(1, 9) + `.` + getRandomInteger(0, 9);
 };
 
 const generateDuration = () => {
