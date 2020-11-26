@@ -3,7 +3,8 @@ import {createMainNavigationTemplate} from "./view/main-navigation.js";
 import {createSiteFilterTemplate} from "./view/site-filter.js";
 import {createFilmsContainerTemplate} from "./view/films-container.js";
 import {createFilmCardTemplate} from "./view/film-card.js";
-import {createFilmsExtraContainerTemplate} from "./view/films-extra-container.js";
+import {createFilmsTopRatedContainerTemplate} from "./view/films-top-rated-container.js";
+import {createFilmsMostCommentedContainerTemplate} from "./view/films-most-commented-container.js";
 import {createFilmDetailsTemplate} from "./view/film-details.js";
 import {createStatisticsTemplate} from "./view/statistics.js";
 import {generateTask} from "./mock/task.js";
@@ -32,22 +33,25 @@ render(siteMainElement, createFilmsContainerTemplate(), `beforeend`);
 const siteFilmsSectionElement = document.querySelector(`.films`);
 const filmsContainerElement = siteFilmsSectionElement.querySelector(`.films-list__container`);
 
-for (let i = 0; i < MAX_CARD_COUNT; i++) {
-  render(filmsContainerElement, createFilmCardTemplate(tasks[i]), `beforeend`);
-}
+tasks.slice(0, MAX_CARD_COUNT).forEach((task) => {
+  render(filmsContainerElement, createFilmCardTemplate(task), `beforeend`);
+});
 
-for (let i = 0; i < EXTRA_LIST_COUNT; i++) {
-  render(siteFilmsSectionElement, createFilmsExtraContainerTemplate(), `beforeend`);
-}
+render(siteFilmsSectionElement, createFilmsTopRatedContainerTemplate(), `beforeend`);
+render(siteFilmsSectionElement, createFilmsMostCommentedContainerTemplate(), `beforeend`);
 
-const filmsExtraContainerElements = siteFilmsSectionElement.querySelectorAll(`.films-list--extra`);
+const filmsTopRatedContainerElement = siteFilmsSectionElement.querySelector(`.films-list--top-rated .films-list__container`);
+const filmsMostCommentedContainerElement = siteFilmsSectionElement.querySelector(`.films-list--most-commented .films-list__container`);
 
-for (let i = 0; i < MAX_EXTRA_CARD_COUNT; i++) {
-  let theContainer = filmsExtraContainerElements[i];
-  for (let k = 0; k < MAX_EXTRA_CARD_COUNT; k++) {
-    render(theContainer.querySelector(`.films-list__container`), createFilmCardTemplate(tasks[k]), `beforeend`);
-  }
-}
+tasks.sort((a, b) => b.comments.length - a.comments.length).slice(0, MAX_EXTRA_CARD_COUNT).forEach((task) => {
+  render(filmsTopRatedContainerElement, createFilmCardTemplate(task), `beforeend`);
+});
+
+tasks.sort((a, b) => b.rating - a.rating).slice(0, MAX_EXTRA_CARD_COUNT).forEach((task) => {
+  render(filmsMostCommentedContainerElement, createFilmCardTemplate(task), `beforeend`);
+});
+
+// сортирую по рейтингу вырезаю с помощью slice
 
 render(siteBodyElement, createFilmDetailsTemplate(tasks[0]), `beforeend`);
 

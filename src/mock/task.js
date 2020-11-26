@@ -51,6 +51,43 @@ const EMOJIS = [
   `angry`,
   `puke`
 ];
+const PRODUCERS = [
+  `Kevin Feige`,
+  `Kathleen Kennedy`,
+  `David Heyman`,
+  `Jerry Bruckheimer`,
+  `Neal H. Moritz`,
+  `Frank Marshall`
+];
+const SCREENWRITERS = [
+  `Billy Wilder`,
+  `Ethan Coen and Joel Coen`,
+  `Robert Towne`,
+  `Quentin Tarantino`,
+  `Francis Ford Coppola`,
+  `William Goldman`,
+  `Charlie Kaufman`
+];
+const GENRES = [
+  `Action`,
+  `Comedy`,
+  `Drama`,
+  `Fantasy`,
+  `Horror`,
+  `Mystery`,
+  `Romance`,
+  `Thriller`
+];
+const COUNTRIES = [
+  `Switzerland`,
+  `Canada`,
+  `Japan`,
+  `Germany`,
+  `Australia`,
+  `United Kingdom`,
+  `United States`,
+  `Sweden`
+];
 const MAX_DAYS_BACK = 365;
 const StringCount = {
   MIN: 1,
@@ -66,15 +103,38 @@ const getArrayElement = (arr) => {
   return arr[randomInteger];
 };
 
-const generateDescription = (arr) => {
+const getArrayElements = (arr) => {
+  const randomLength = getRandomInteger(0, arr.length);
+  let elements = [];
+
+  for (let i = 0; i < randomLength; i++) {
+    const randomInteger = getRandomInteger(0, arr.length - 1);
+
+    elements.push(arr[randomInteger])
+  }
+
+  return elements;
+};
+
+const generateScreenwriters = () => {
+  return getArrayElements(SCREENWRITERS);
+};
+
+const generateGenres = () => {
+  return getArrayElements(GENRES);
+};
+
+console.log(generateGenres());
+
+const generateDescription = () => {
   const strCount = getRandomInteger(StringCount.MIN, StringCount.MAX);
 
   let description = ``;
 
   for (let i = 0; i < strCount; i++) {
-    const randomInteger = getRandomInteger(0, arr.length - 1);
+    const randomInteger = getRandomInteger(0, DESCRIPTIONS.length - 1);
 
-    description += arr[randomInteger] + ` `;
+    description += DESCRIPTIONS[randomInteger] + ` `;
   }
 
   return description.trim();
@@ -82,6 +142,14 @@ const generateDescription = (arr) => {
 
 const generateTitle = () => {
   return getArrayElement(TITLES);
+};
+
+const generateCountry = () => {
+  return getArrayElement(COUNTRIES);
+};
+
+const generateProducer = () => {
+  return getArrayElement(PRODUCERS);
 };
 
 const generatePoster = () => {
@@ -145,6 +213,8 @@ const generateComments = () => {
   return comments;
 };
 
+// перечитать про комменты в тз
+
 export function generateTask() {
   const comments = generateComments();
 
@@ -154,7 +224,10 @@ export function generateTask() {
     rating: generateRating(),
     duration: generateDuration(),
     year: generateYear(),
-    description: generateDescription(DESCRIPTIONS),
+    description: generateDescription(),
     comments,
+    isWatched: Boolean(getRandomInteger(0, 1)),
+    isHistory: Boolean(getRandomInteger(0, 1)),
+    isFavorite: Boolean(getRandomInteger(0, 1))
   };
 }
