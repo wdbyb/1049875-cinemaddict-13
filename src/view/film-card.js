@@ -1,5 +1,5 @@
 export function createFilmCardTemplate(data) {
-  const {title, poster, rating, duration, year, description, comments} = data;
+  const {title, poster, rating, duration, genres, year, description, comments} = data;
 
   return `<article class="film-card">
     <h3 class="film-card__title">${title}</h3>
@@ -7,7 +7,7 @@ export function createFilmCardTemplate(data) {
     <p class="film-card__info">
       <span class="film-card__year">${year}</span>
       <span class="film-card__duration">${duration}</span>
-      <span class="film-card__genre">Musical</span>
+      <span class="film-card__genre">${genres[0]}</span>
     </p>
     <img src="${poster}" alt="" class="film-card__poster">
     <p class="film-card__description">${description.length > 140 ? description.slice(0, 140) + `...` : description}</p>

@@ -51,7 +51,7 @@ const EMOJIS = [
   `angry`,
   `puke`
 ];
-const PRODUCERS = [
+const DIRECTORS = [
   `Kevin Feige`,
   `Kathleen Kennedy`,
   `David Heyman`,
@@ -59,7 +59,7 @@ const PRODUCERS = [
   `Neal H. Moritz`,
   `Frank Marshall`
 ];
-const SCREENWRITERS = [
+const WRITERS = [
   `Billy Wilder`,
   `Ethan Coen and Joel Coen`,
   `Robert Towne`,
@@ -68,15 +68,20 @@ const SCREENWRITERS = [
   `William Goldman`,
   `Charlie Kaufman`
 ];
+const ACTORS = [
+  `Jack Nicholson`,
+  `Marlon Brando`,
+  `Robert De Niro`,
+  `Al Pacino`,
+  `Daniel Day-Lewis`,
+  `Dustin Hoffman`,
+  `Tom Hanks`
+];
 const GENRES = [
   `Action`,
   `Comedy`,
   `Drama`,
-  `Fantasy`,
-  `Horror`,
-  `Mystery`,
-  `Romance`,
-  `Thriller`
+  `Fantasy`
 ];
 const COUNTRIES = [
   `Switzerland`,
@@ -87,6 +92,12 @@ const COUNTRIES = [
   `United Kingdom`,
   `United States`,
   `Sweden`
+];
+const AGE_RATING = [
+  `6+`,
+  `12+`,
+  `16+`,
+  `18+`
 ];
 const MAX_DAYS_BACK = 365;
 const StringCount = {
@@ -104,27 +115,29 @@ const getArrayElement = (arr) => {
 };
 
 const getArrayElements = (arr) => {
-  const randomLength = getRandomInteger(0, arr.length);
+  const randomLength = getRandomInteger(1, arr.length);
   let elements = [];
 
   for (let i = 0; i < randomLength; i++) {
     const randomInteger = getRandomInteger(0, arr.length - 1);
 
-    elements.push(arr[randomInteger])
+    elements.push(arr[randomInteger]);
   }
 
   return elements;
 };
 
-const generateScreenwriters = () => {
-  return getArrayElements(SCREENWRITERS);
+const generateWriters = () => {
+  return getArrayElements(WRITERS).join(`, `);
+};
+
+const generateActors = () => {
+  return getArrayElements(ACTORS).join(`, `);
 };
 
 const generateGenres = () => {
   return getArrayElements(GENRES);
 };
-
-console.log(generateGenres());
 
 const generateDescription = () => {
   const strCount = getRandomInteger(StringCount.MIN, StringCount.MAX);
@@ -148,8 +161,12 @@ const generateCountry = () => {
   return getArrayElement(COUNTRIES);
 };
 
-const generateProducer = () => {
-  return getArrayElement(PRODUCERS);
+const generateAgeRating = () => {
+  return getArrayElement(AGE_RATING);
+};
+
+const generateDirector = () => {
+  return getArrayElement(DIRECTORS);
 };
 
 const generatePoster = () => {
@@ -161,6 +178,12 @@ const generateDate = () => {
 
   return dayjs().add(daysGap, `day`).format(`YYYY/MM/DD HH:mm`);
 };
+
+const generateYear = () => {
+  const yearsGap = getRandomInteger(-50, 0);
+
+  return dayjs().add(yearsGap, `year`).format(`YYYY`);
+}
 
 const generateCommentText = () => {
   return getArrayElement(COMMENTS);
@@ -179,14 +202,6 @@ const generateDuration = () => {
   const minutes = getRandomInteger(0, 60);
 
   return hours + `h ` + minutes + `m`;
-};
-
-const generateYear = () => {
-  for (let i = 0; i < 20; i++) {
-    YEARS.push(1970 + i);
-  }
-
-  return getArrayElement(YEARS);
 };
 
 const generateCommentAuthor = () => {
@@ -213,8 +228,6 @@ const generateComments = () => {
   return comments;
 };
 
-// перечитать про комменты в тз
-
 export function generateTask() {
   const comments = generateComments();
 
@@ -225,6 +238,12 @@ export function generateTask() {
     duration: generateDuration(),
     year: generateYear(),
     description: generateDescription(),
+    director: generateDirector(),
+    writers: generateWriters(),
+    actors: generateActors(),
+    genres: generateGenres(),
+    country: generateCountry(),
+    age: generateAgeRating(),
     comments,
     isWatched: Boolean(getRandomInteger(0, 1)),
     isHistory: Boolean(getRandomInteger(0, 1)),

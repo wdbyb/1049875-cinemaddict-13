@@ -1,5 +1,13 @@
+import dayjs from "dayjs";
+
+const createGenresList = (arr) => {
+  return arr.map((genre) => {
+    return `<span class="film-details__genre">${genre}</span>`;
+  }).join(``);
+};
+
 export function createFilmDetailsTemplate(data) {
-  const {title, poster, rating, duration, year, description} = data;
+  const {title, poster, rating, duration, year, description, director, writers, actors, genres, age, country} = data;
 
   return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -11,7 +19,7 @@ export function createFilmDetailsTemplate(data) {
           <div class="film-details__poster">
             <img class="film-details__poster-img" src="${poster}" alt="">
 
-            <p class="film-details__age">18+</p>
+            <p class="film-details__age">${age}</p>
           </div>
 
           <div class="film-details__info">
@@ -29,19 +37,19 @@ export function createFilmDetailsTemplate(data) {
             <table class="film-details__table">
               <tr class="film-details__row">
                 <td class="film-details__term">Director</td>
-                <td class="film-details__cell">Anthony Mann</td>
+                <td class="film-details__cell">${director}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Writers</td>
-                <td class="film-details__cell">Anne Wigton, Heinz Herald, Richard Weil</td>
+                <td class="film-details__cell">${writers}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Actors</td>
-                <td class="film-details__cell">Erich von Stroheim, Mary Beth Hughes, Dan Duryea</td>
+                <td class="film-details__cell">${actors}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">30 March 1945</td>
+                <td class="film-details__cell">${dayjs(year).format(`D MMMM YYYY`)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
@@ -49,14 +57,12 @@ export function createFilmDetailsTemplate(data) {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
-                <td class="film-details__cell">USA</td>
+                <td class="film-details__cell">${country}</td>
               </tr>
               <tr class="film-details__row">
-                <td class="film-details__term">Genres</td>
+                <td class="film-details__term">${genres.length === 1 ? `Genre` : `Genres`}</td>
                 <td class="film-details__cell">
-                  <span class="film-details__genre">Drama</span>
-                  <span class="film-details__genre">Film-Noir</span>
-                  <span class="film-details__genre">Mystery</span></td>
+                  ${createGenresList(genres)}
               </tr>
             </table>
 

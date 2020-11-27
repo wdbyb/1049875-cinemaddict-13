@@ -51,8 +51,6 @@ tasks.sort((a, b) => b.rating - a.rating).slice(0, MAX_EXTRA_CARD_COUNT).forEach
   render(filmsMostCommentedContainerElement, createFilmCardTemplate(task), `beforeend`);
 });
 
-// сортирую по рейтингу вырезаю с помощью slice
-
 render(siteBodyElement, createFilmDetailsTemplate(tasks[0]), `beforeend`);
 
 const siteFilmDetailsElement = document.querySelector(`.film-details`);
