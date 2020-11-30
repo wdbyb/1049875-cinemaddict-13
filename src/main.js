@@ -1,5 +1,5 @@
 import {createProfileRatingTemplate} from "./view/profile-rating.js";
-import {createMainNavigationTemplate} from "./view/main-navigation.js";
+import MainNavigation from "./view/main-navigation.js";
 import {createSiteFilterTemplate} from "./view/site-filter.js";
 import {createFilmsContainerTemplate} from "./view/films-container.js";
 import {createFilmCardTemplate} from "./view/film-card.js";
@@ -11,6 +11,7 @@ import {createShowMoreButtonTemplate} from "./view/show-more-button.js";
 import {generateTask} from "./mock/task.js";
 import {generateFilter} from "./mock/filter.js";
 import {MAX_EXTRA_CARD_COUNT, TASKS_COUNT, TASKS_COUNT_PER_STEP, INDEX_FIRST_ELEMENT} from "./constants.js";
+import {renderElement, renderTemplate, RenderPosition} from "./utils.js";
 
 const siteBodyElement = document.querySelector(`body`);
 const siteHeaderElement = siteBodyElement.querySelector(`.header`);
@@ -27,7 +28,7 @@ function render(container, template, place) {
 
 render(siteHeaderElement, createProfileRatingTemplate(), `beforeend`);
 render(siteFooterStatisticsElement, createStatisticsTemplate(), `beforeend`);
-render(siteMainElement, createMainNavigationTemplate(filters), `beforeend`);
+renderElement(siteMainElement, new MainNavigation().getElement(filters), RenderPosition.BEFOREEND);
 render(siteMainElement, createSiteFilterTemplate(), `beforeend`);
 render(siteMainElement, createFilmsContainerTemplate(), `beforeend`);
 
