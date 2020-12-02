@@ -1,3 +1,4 @@
+import {createElement} from "../utils.js";
 import dayjs from "dayjs";
 
 const createGenresList = (arr) => {
@@ -6,7 +7,7 @@ const createGenresList = (arr) => {
   }).join(``);
 };
 
-export function createFilmDetailsTemplate(data) {
+const createFilmDetailsTemplate = (data) => {
   const {title, poster, rating, duration, year, description, director, writers, actors, genres, age, country} = data;
 
   return `<section class="film-details">
@@ -176,4 +177,26 @@ export function createFilmDetailsTemplate(data) {
       </div>
     </form>
   </section>`;
+};
+
+export default class Popup {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate(wee) {
+    return createFilmDetailsTemplate(wee);
+  }
+
+  getElement(wee) {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate(wee));
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
 }
