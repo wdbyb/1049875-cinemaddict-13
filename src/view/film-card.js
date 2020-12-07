@@ -24,17 +24,19 @@ const createFilmCardTemplate = (data) => {
 };
 
 export default class Card {
-  constructor() {
+  constructor(task) {
+    this._task = task;
+
     this._element = null;
   }
 
-  getTemplate(wee) {
-    return createFilmCardTemplate(wee);
+  getTemplate() {
+    return createFilmCardTemplate(this._task);
   }
 
-  getElement(wee) {
+  getElement() {
     if (!this._element) {
-      this._element = createElement(this.getTemplate(wee));
+      this._element = createElement(this.getTemplate());
     }
 
     return this._element;

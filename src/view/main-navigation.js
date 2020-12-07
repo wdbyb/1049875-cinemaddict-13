@@ -22,17 +22,19 @@ const createMainNavigationTemplate = (filterItems) => {
 };
 
 export default class MainNavigation {
-  constructor() {
+  constructor(task) {
+    this._task = task;
+
     this._element = null;
   }
 
-  getTemplate(wee) {
-    return createMainNavigationTemplate(wee);
+  getTemplate() {
+    return createMainNavigationTemplate(this._task);
   }
 
-  getElement(wee) {
+  getElement() {
     if (!this._element) {
-      this._element = createElement(this.getTemplate(wee));
+      this._element = createElement(this.getTemplate());
     }
 
     return this._element;
