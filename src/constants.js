@@ -107,4 +107,3 @@ export const NavigationNames = {
 export const MAX_EXTRA_CARD_COUNT = 2;
 export const TASKS_COUNT = 22;
 export const TASKS_COUNT_PER_STEP = 5;
-export const INDEX_FIRST_ELEMENT = 0;

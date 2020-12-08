@@ -1,6 +1,7 @@
 import {SHORT_DESCRIPTION_LENGTH} from "../constants.js";
+import {createElement} from "../utils.js";
 
-export function createFilmCardTemplate(data) {
+const createFilmCardTemplate = (data) => {
   const {title, poster, rating, duration, genres, year, description, comments} = data;
 
   return `<article class="film-card">
@@ -20,4 +21,28 @@ export function createFilmCardTemplate(data) {
       <button class="film-card__controls-item button film-card__controls-item--favorite" type="button">Mark as favorite</button>
     </div>
   </article>`;
+};
+
+export default class Card {
+  constructor(task) {
+    this._task = task;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmCardTemplate(this._task);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
 }
