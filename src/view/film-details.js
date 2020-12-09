@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import Abstract from "./abstract.js";
 import dayjs from "dayjs";
 
 const createGenresList = (arr) => {
@@ -179,26 +179,13 @@ const createFilmDetailsTemplate = (data) => {
   </section>`;
 };
 
-export default class Popup {
+export default class Popup extends Abstract {
   constructor(task) {
+    super();
     this._task = task;
-
-    this._element = null;
   }
 
   getTemplate() {
     return createFilmDetailsTemplate(this._task);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

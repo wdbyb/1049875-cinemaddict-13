@@ -1,5 +1,5 @@
 import {SHORT_DESCRIPTION_LENGTH} from "../constants.js";
-import {createElement} from "../utils.js";
+import Abstract from "./abstract.js";
 
 const createFilmCardTemplate = (data) => {
   const {title, poster, rating, duration, genres, year, description, comments} = data;
@@ -23,26 +23,13 @@ const createFilmCardTemplate = (data) => {
   </article>`;
 };
 
-export default class Card {
+export default class Card extends Abstract {
   constructor(task) {
+    super();
     this._task = task;
-
-    this._element = null;
   }
 
   getTemplate() {
     return createFilmCardTemplate(this._task);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
