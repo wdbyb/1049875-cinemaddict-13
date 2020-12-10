@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import {DESCRIPTIONS, COMMENTS, TITLES, POSTERS, AUTHORS, EMOJIS, DIRECTORS, WRITERS, ACTORS, GENRES, COUNTRIES, AGE_RATING, MAX_DAYS_BACK, StringCount, CommentCount} from "../constants.js";
-import {getRandomInteger, getArrayElement, getArrayElements} from "../utils.js";
+import {getRandomInteger, getArrayElement, getArrayElements} from "../utils/common.js";
 
 const generateWriters = () => {
   return getArrayElements(WRITERS).join(`, `);
