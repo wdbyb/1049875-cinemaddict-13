@@ -1,5 +1,5 @@
 import {NavigationNames} from "../constants.js";
-import {createElement} from "../utils.js";
+import Abstract from "./abstract.js";
 
 const createMainNavigationItem = (filter) => {
   const {name, count} = filter;
@@ -21,26 +21,13 @@ const createMainNavigationTemplate = (filterItems) => {
   </nav>`;
 };
 
-export default class MainNavigation {
+export default class MainNavigation extends Abstract {
   constructor(task) {
+    super();
     this._task = task;
-
-    this._element = null;
   }
 
   getTemplate() {
     return createMainNavigationTemplate(this._task);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

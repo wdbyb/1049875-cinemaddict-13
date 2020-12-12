@@ -1,5 +1,5 @@
 import {SHORT_DESCRIPTION_LENGTH} from "../constants.js";
-import {createElement} from "../utils.js";
+import Abstract from "./abstract.js";
 
 const createFilmCardTemplate = (data) => {
   const {title, poster, rating, duration, genres, year, description, comments} = data;
@@ -23,26 +23,34 @@ const createFilmCardTemplate = (data) => {
   </article>`;
 };
 
-export default class Card {
+export default class Card extends Abstract {
   constructor(task) {
+    super();
     this._task = task;
-
-    this._element = null;
+    this._clickHandler = this._clickHandler.bind(this);
   }
 
   getTemplate() {
     return createFilmCardTemplate(this._task);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _clickHandler(evt) {
+    evt.preventDefault();
+    this._callback.click();
   }
 
-  removeElement() {
-    this._element = null;
+  setClickHandlerOnTitle(callback) {
+    this._callback.click = callback;
+    this.getElement().querySelector(`.film-card__title`).addEventListener(`click`, this._clickHandler);
+  }
+
+  setClickHandlerOnPoster(callback) {
+    this._callback.click = callback;
+    this.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, this._clickHandler);
+  }
+
+  setClickHandlerOnComments(callback) {
+    this._callback.click = callback;
+    this.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, this._clickHandler);
   }
 }
