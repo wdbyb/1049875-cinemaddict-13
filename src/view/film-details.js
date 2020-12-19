@@ -8,7 +8,7 @@ const createGenresList = (arr) => {
 };
 
 const createFilmDetailsTemplate = (data) => {
-  const {title, poster, rating, duration, year, description, director, writers, actors, genres, age, country} = data;
+  const {title, poster, rating, duration, year, description, director, writers, actors, genres, age, country, isWatched, isFavorite, isWatchlist} = data;
 
   return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -74,13 +74,13 @@ const createFilmDetailsTemplate = (data) => {
         </div>
 
         <section class="film-details__controls">
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${isWatchlist ? `checked` : ``}>
           <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched">
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${isWatched ? `checked` : ``}>
           <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${isFavorite ? `checked` : ``}>
           <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
         </section>
       </div>
@@ -184,10 +184,74 @@ export default class Popup extends Abstract {
     super();
     this._task = task;
     this._clickHandler = this._clickHandler.bind(this);
+
+    this._watchlistToggleHandler = this._watchlistToggleHandler.bind(this);
+    this._watchedToggleHandler = this._watchedToggleHandler.bind(this);
+    this._favoriteToggleHandler = this._favoriteToggleHandler.bind(this);
+
+    this._setInnerHandlers();
   }
 
   getTemplate() {
     return createFilmDetailsTemplate(this._task);
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setClickHandler(this._callback.click);
+  }
+
+  _setInnerHandlers() {
+    this.getElement().querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, this._watchlistToggleHandler);
+    this.getElement().querySelector(`.film-details__control-label--watched`).addEventListener(`click`, this._watchedToggleHandler);
+    this.getElement().querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._favoriteToggleHandler);
+  }
+
+  _watchlistToggleHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      isWatchlist: !this._task.isWatchlist
+    });
+  }
+
+  _watchedToggleHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      isWatched: !this._task.isWatched
+    });
+  }
+
+  _favoriteToggleHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      isFavorite: !this._task.isFavorite
+    });
+  }
+
+  updateData(update) {
+    if (!update) {
+      return;
+    }
+
+    this._task = Object.assign(
+      {},
+      this._task,
+      update
+    );
+
+    this.updateElement();
+  }
+
+  updateElement() {
+    let prevElement = this.getElement();
+    const parent = prevElement.parentElement;
+    this.removeElement();
+
+    const newElement = this.getElement();
+
+    parent.replaceChild(newElement, prevElement);
+
+    this.restoreHandlers();
   }
 
   _clickHandler(evt) {

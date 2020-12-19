@@ -122,7 +122,7 @@ export function generateTask() {
     age: generateAgeRating(),
     comments,
     isWatched: Boolean(getRandomInteger(0, 1)),
-    isHistory: Boolean(getRandomInteger(0, 1)),
+    isWatchlist: Boolean(getRandomInteger(0, 1)),
     isFavorite: Boolean(getRandomInteger(0, 1))
   };
 }
