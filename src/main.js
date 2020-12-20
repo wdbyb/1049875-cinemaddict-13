@@ -25,6 +25,6 @@ render(siteFooterStatisticsElement, statistics, RenderPosition.BEFOREEND);
 render(siteMainElement, mainNavigation, RenderPosition.BEFOREEND);
 render(siteMainElement, filterNavigation, RenderPosition.BEFOREEND);
 
-const boo = new MovieListPresenter(siteMainElement);
+const movieList = new MovieListPresenter(siteMainElement);
 
-boo.init(tasks);
+movieList.init(tasks);

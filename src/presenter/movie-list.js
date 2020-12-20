@@ -40,7 +40,6 @@ export default class MovieListPresenter {
 
   _changeData(updatedFilm) {
     this._films = updateItem(this._films, updatedFilm);
-    // this._filmPresenter[updatedFilm.id].init(updatedFilm);
     this.init(this._films);
   }
 

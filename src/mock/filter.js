@@ -1,8 +1,8 @@
 const taskToFilterMap = {
   watchlist: (tasks) => tasks
-    .filter((task) => task.isWatched).length,
+    .filter((task) => task.isWatchlist).length,
   history: (tasks) => tasks
-    .filter((task) => task.isHistory).length,
+    .filter((task) => task.isWatched).length,
   favorites: (tasks) => tasks
     .filter((task) => task.isFavorite).length
 };
