@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
@@ -38,3 +40,45 @@ export const updateItem = (items, update) => {
     ...items.slice(index + 1)
   ];
 };
+
+const getWeightForNullDate = (dateA, dateB) => {
+  if (dateA === null && dateB === null) {
+    return 0;
+  }
+
+  if (dateA === null) {
+    return 1;
+  }
+
+  if (dateB === null) {
+    return -1;
+  }
+
+  return null;
+};
+
+export const sortMovieDate = (taskA, taskB) => {
+  const weight = getWeightForNullDate(taskA.dueDate, taskB.dueDate);
+
+  if (weight !== null) {
+    return weight;
+  }
+
+  return dayjs(taskA.dueDate).diff(dayjs(taskB.dueDate));
+};
+
+export const sortMovieRating = (a, b) => {
+  const sortMovies = movies;
+
+  return sortMovies.sort((a, b) => b.rating - a.rating);
+};
+
+// export const sortMovieDate = (taskA, taskB) => {
+//   const weight = getWeightForNullDate(taskA.dueDate, taskB.dueDate);
+//
+//   if (weight !== null) {
+//     return weight;
+//   }
+//
+//   return dayjs(taskB.dueDate).diff(dayjs(taskA.dueDate));
+// };

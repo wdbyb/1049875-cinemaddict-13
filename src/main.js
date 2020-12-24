@@ -15,7 +15,8 @@ const siteMainElement = siteBodyElement.querySelector(`.main`);
 const siteFooterElement = siteBodyElement.querySelector(`.footer`);
 const siteFooterStatisticsElement = siteFooterElement.querySelector(`.footer__statistics`);
 
-const movies = new Array(TASKS_COUNT).fill().map(generateTask);
+// const movies = new Array(TASKS_COUNT).fill().map(generateTask);
+const movies = new Array(8).fill().map(generateTask);
 const filters = generateFilter(movies);
 const moviesModel = new MoviesModel();
 moviesModel.setMovies(movies);
