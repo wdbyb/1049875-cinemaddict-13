@@ -8,6 +8,8 @@ import {TASKS_COUNT} from "./constants.js";
 import {render, RenderPosition} from "./utils/render.js";
 import MovieListPresenter from "./presenter/movie-list.js";
 import MoviesModel from "./model/movies.js";
+import FilterModel from "./model/filter.js";
+import FilterPresenter from "./presenter/filter.js";
 
 const siteBodyElement = document.querySelector(`body`);
 const siteHeaderElement = siteBodyElement.querySelector(`.header`);
@@ -17,20 +19,25 @@ const siteFooterStatisticsElement = siteFooterElement.querySelector(`.footer__st
 
 // const movies = new Array(TASKS_COUNT).fill().map(generateTask);
 const movies = new Array(8).fill().map(generateTask);
-const filters = generateFilter(movies);
+// const filters = generateFilter(movies);
+
 const moviesModel = new MoviesModel();
 moviesModel.setMovies(movies);
 
+const filterModel = new FilterModel();
 const profileRating = new ProfileRating();
 const statistics = new Statistics();
-const mainNavigation = new MainNavigation(filters);
+// const mainNavigation = new MainNavigation(filters, `all`);
 // const filterNavigation = new Filter();
 
 render(siteHeaderElement, profileRating, RenderPosition.BEFOREEND);
 render(siteFooterStatisticsElement, statistics, RenderPosition.BEFOREEND);
-render(siteMainElement, mainNavigation, RenderPosition.BEFOREEND);
+// render(siteMainElement, mainNavigation, RenderPosition.BEFOREEND);
 // render(siteMainElement, filterNavigation, RenderPosition.BEFOREEND);
 
-const movieList = new MovieListPresenter(siteMainElement, moviesModel);
+const movieList = new MovieListPresenter(siteMainElement, moviesModel, filterModel);
+const filterPresenter = new FilterPresenter(siteMainElement, filterModel, moviesModel);
+
+filterPresenter.init();
 
 movieList.init();

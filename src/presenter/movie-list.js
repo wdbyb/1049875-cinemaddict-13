@@ -5,14 +5,15 @@ import FilmsMostCommentedContainer from "../view/films-most-commented-container.
 import CardView from "../view/film-card.js";
 import PopupView from "../view/film-details.js";
 import Sort from "../view/site-filter.js";
-import {MAX_EXTRA_CARD_COUNT, TASKS_COUNT_PER_STEP, UserAction, UpdateType, SortType} from "../constants.js";
+import {MAX_EXTRA_CARD_COUNT, TASKS_COUNT_PER_STEP, UserAction, UpdateType, SortType, FilterType} from "../constants.js";
 import {render, remove, RenderPosition} from "../utils/render.js";
-import {updateItem, sortMovieDate, sortMovieRating} from "../utils/common.js";
+import {updateItem, sortMovieDate, sortMovieRating, filter} from "../utils/common.js";
 
 export default class MovieListPresenter {
-  constructor(movieContainer, moviesModel) {
+  constructor(movieContainer, moviesModel, filterModel) {
     this._movieContainer = movieContainer;
     this._moviesModel = moviesModel;
+    this._filterModel = filterModel;
     this._filmPresenter = {};
     this._currentSortType = SortType.DEFAULT;
 
@@ -30,6 +31,7 @@ export default class MovieListPresenter {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
     this._moviesModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
   }
 
   init(filmsData) {
@@ -67,18 +69,21 @@ export default class MovieListPresenter {
   }
 
   _getMovies() {
-    const foo = this._moviesModel.getMovies();
+    // const foo = this._moviesModel.getMovies();
+    const filterType = this._filterModel.getFilter();
+    const movies = this._moviesModel.getMovies();
+    const filtredTasks = filter[filterType](movies);
 
     switch (this._currentSortType) {
       case SortType.DEFAULT:
-        return foo;
+        return filtredTasks;
       case SortType.DATE:
-        return foo.sort((a, b) => b.year - a.year);
+        return filtredTasks.sort((a, b) => b.year - a.year);
       case SortType.RATING:
-        return foo.sort((a, b) => b.rating - a.rating);
+        return filtredTasks.sort((a, b) => b.rating - a.rating);
     }
 
-    return foo;
+    return filtredTasks;
   }
 
   _handleSortTypeChange(sortType) {

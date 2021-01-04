@@ -107,6 +107,7 @@ export function generateTask() {
   const comments = generateComments();
 
   return {
+    isAll: true,
     id: generateId(),
     title: generateTitle(),
     poster: generatePoster(),
