@@ -14,7 +14,7 @@ const createComments = (arr) => {
 };
 
 const foo = (data) => {
-  const {author, text, date, emoji} = data;
+  const {author, text, date, emoji, id} = data;
 
   return `<li class="film-details__comment">
     <span class="film-details__comment-emoji">
@@ -25,7 +25,7 @@ const foo = (data) => {
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${author}</span>
         <span class="film-details__comment-day">${date}</span>
-        <button class="film-details__comment-delete">Delete</button>
+        <button class="film-details__comment-delete" id="${id}">Delete</button>
       </p>
     </div>
   </li>`;
@@ -156,6 +156,7 @@ export default class Popup extends Smart {
   constructor(task) {
     super();
     this._task = task;
+    this._comments = task.comments;
 
     this._watchlistToggleHandler = this._watchlistToggleHandler.bind(this);
     this._watchedToggleHandler = this._watchedToggleHandler.bind(this);
@@ -176,8 +177,6 @@ export default class Popup extends Smart {
     return createFilmDetailsTemplate(this._task);
   }
 
-
-
   restoreHandlers() {
     this._setInnerHandlers();
     this.setClickHandler(this._callback.click);
@@ -194,14 +193,22 @@ export default class Popup extends Smart {
     this.getElement().querySelector(`#emoji-puke`).addEventListener(`click`, this._emojiToggleHandler);
     this.getElement().querySelector(`#emoji-angry`).addEventListener(`click`, this._emojiToggleHandler);
     this.getElement().querySelector(`#emoji-sleeping`).addEventListener(`click`, this._emojiToggleHandler);
-    console.log(this.getElement().querySelectorAll(`.film-details__comment-delete`));
-    // нахожу все delet-ы навешиваю на них листенеры; в листенеры передаю комментДелетХендлер
+
+    const myArr = this.getElement().querySelectorAll(`.film-details__comment-delete`);
+    myArr.forEach((element) => element.addEventListener(`click`, this._commentDeleteHandler));
   }
 
-  _commentDeleteHandler() {
-    // удаляю комментарий на котором сделан клик, добавить в поле к кнопке delete id коммента, а потом найти его в дате и удалить оттуда
+  _commentDeleteHandler(evt) {
+    evt.preventDefault();
 
-    // подумать что происходит после клика на кнопку "удаления"
+    const commentId = parseInt(evt.target.id);
+    const changedComments = this._comments.filter((item) => item.id !== commentId);
+
+    this._comments = changedComments;
+
+    this.updateData({
+      comments: changedComments
+    });
   }
 
   _scrollTopHandler(evt) {
