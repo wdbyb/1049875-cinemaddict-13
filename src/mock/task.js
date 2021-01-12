@@ -64,7 +64,7 @@ const generateCommentText = () => {
   return getArrayElement(COMMENTS);
 };
 
-const generateCommentDate = () => {
+export const generateCommentDate = () => {
   return generateDate();
 };
 
@@ -79,7 +79,7 @@ const generateDuration = () => {
   return hours + `h ` + minutes + `m`;
 };
 
-const generateCommentAuthor = () => {
+export const generateCommentAuthor = () => {
   return getArrayElement(AUTHORS);
 };
 

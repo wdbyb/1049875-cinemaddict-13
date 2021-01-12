@@ -126,13 +126,9 @@ export default class MovieListPresenter {
   _renderPopup(film) {
     const popup = new PopupView(film);
 
-
-
     render(this._bodyElement, popup, RenderPosition.BEFOREEND);
 
     this._bodyElement.classList.add(`hide-overflow`);
-
-
 
     popup.setClickHandlerOnWatched(() => {
       this._handleWatchedClick(film);

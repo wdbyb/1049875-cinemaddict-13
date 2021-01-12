@@ -1,5 +1,7 @@
 import Smart from "./smart.js";
 import dayjs from "dayjs";
+import {generateId} from "../utils/common.js";
+import {generateCommentDate, generateCommentAuthor} from "../mock/task.js";
 
 const createGenresList = (arr) => {
   return arr.map((genre) => {
@@ -171,7 +173,6 @@ export default class Popup extends Smart {
     this._commentDeleteHandler = this._commentDeleteHandler.bind(this);
     this._commentAddHandler = this._commentAddHandler.bind(this);
 
-
     this._setInnerHandlers();
   }
 
@@ -205,16 +206,14 @@ export default class Popup extends Smart {
     evt.preventDefault();
     if (evt.ctrlKey && evt.key === `Enter`) {
       const newComment = {
-        id: `1`,
-        author: `2`,
-        text: `333`,
-        emoji: `puke`,
-        date: `2013`
+        id: generateId(),
+        author: generateCommentAuthor(),
+        text: this._task.inputText,
+        emoji: this.getElement().querySelector(`.film-details__emoji-item:checked`).value,
+        date: generateCommentDate()
       };
 
       this._comments.push(newComment);
-
-      console.log(this.getElement().querySelector(`.film-details__emoji-item:checked`).value);
 
       this.updateData({
         comments: this._comments
