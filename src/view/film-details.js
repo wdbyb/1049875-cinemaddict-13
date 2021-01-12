@@ -169,6 +169,8 @@ export default class Popup extends Smart {
     this._clickHandlerOnWatched = this._clickHandlerOnWatched.bind(this);
     this._clickHandlerOnFavorite = this._clickHandlerOnFavorite.bind(this);
     this._commentDeleteHandler = this._commentDeleteHandler.bind(this);
+    this._commentAddHandler = this._commentAddHandler.bind(this);
+
 
     this._setInnerHandlers();
   }
@@ -193,9 +195,31 @@ export default class Popup extends Smart {
     this.getElement().querySelector(`#emoji-puke`).addEventListener(`click`, this._emojiToggleHandler);
     this.getElement().querySelector(`#emoji-angry`).addEventListener(`click`, this._emojiToggleHandler);
     this.getElement().querySelector(`#emoji-sleeping`).addEventListener(`click`, this._emojiToggleHandler);
+    this.getElement().querySelector(`.film-details__inner`).addEventListener(`keyup`, this._commentAddHandler);
 
     const myArr = this.getElement().querySelectorAll(`.film-details__comment-delete`);
     myArr.forEach((element) => element.addEventListener(`click`, this._commentDeleteHandler));
+  }
+
+  _commentAddHandler(evt) {
+    evt.preventDefault();
+    if (evt.ctrlKey && evt.key === `Enter`) {
+      const newComment = {
+        id: `1`,
+        author: `2`,
+        text: `333`,
+        emoji: `puke`,
+        date: `2013`
+      };
+
+      this._comments.push(newComment);
+
+      console.log(this.getElement().querySelector(`.film-details__emoji-item:checked`).value);
+
+      this.updateData({
+        comments: this._comments
+      });
+    }
   }
 
   _commentDeleteHandler(evt) {
