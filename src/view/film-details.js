@@ -225,7 +225,7 @@ export default class Popup extends Smart {
   _commentDeleteHandler(evt) {
     evt.preventDefault();
 
-    const commentId = parseInt(evt.target.id);
+    const commentId = parseInt(evt.target.id, 10);
     const changedComments = this._comments.filter((item) => item.id !== commentId);
 
     this._comments = changedComments;

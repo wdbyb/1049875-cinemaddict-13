@@ -5,9 +5,9 @@ import FilmsMostCommentedContainer from "../view/films-most-commented-container.
 import CardView from "../view/film-card.js";
 import PopupView from "../view/film-details.js";
 import Sort from "../view/site-filter.js";
-import {MAX_EXTRA_CARD_COUNT, TASKS_COUNT_PER_STEP, UserAction, UpdateType, SortType, FilterType} from "../constants.js";
+import {MAX_EXTRA_CARD_COUNT, TASKS_COUNT_PER_STEP, UserAction, UpdateType, SortType} from "../constants.js";
 import {render, remove, RenderPosition} from "../utils/render.js";
-import {updateItem, sortMovieDate, sortMovieRating, filter} from "../utils/common.js";
+import {filter} from "../utils/common.js";
 
 export default class MovieListPresenter {
   constructor(movieContainer, moviesModel, filterModel) {
@@ -34,9 +34,8 @@ export default class MovieListPresenter {
     this._filterModel.addObserver(this._handleModelEvent);
   }
 
-  init(filmsData) {
+  init() {
     this._bodyElement = document.querySelector(`body`);
-    // this._films = filmsData.slice();
     this._renderMoviesList();
     this._clearMoviesList();
     this._renderMoviesList();

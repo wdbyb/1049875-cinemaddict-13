@@ -1,4 +1,3 @@
-import {NavigationNames} from "../constants.js";
 import Abstract from "./abstract.js";
 
 const createMainNavigationItem = (filter, currentFilterType) => {
@@ -8,10 +7,8 @@ const createMainNavigationItem = (filter, currentFilterType) => {
 };
 
 const createMainNavigationTemplate = (filterItems, currentFilterType) => {
-  // <a href="#all" class="main-navigation__item main-navigation__item${type === currentFilterType ? `--active` : ``}">All movies</a>
-  const {type, name, count} = filterItems;
   const createMainNavigationItems = filterItems
-    .map((filter, index) => createMainNavigationItem(filter, currentFilterType))
+    .map((filter) => createMainNavigationItem(filter, currentFilterType))
     .join(``);
 
   return `<nav class="main-navigation">

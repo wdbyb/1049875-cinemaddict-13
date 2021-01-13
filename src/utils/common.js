@@ -74,19 +74,3 @@ export const sortMovieDate = (taskA, taskB) => {
 
   return dayjs(taskA.dueDate).diff(dayjs(taskB.dueDate));
 };
-
-export const sortMovieRating = (a, b) => {
-  const sortMovies = movies;
-
-  return sortMovies.sort((a, b) => b.rating - a.rating);
-};
-
-// export const sortMovieDate = (taskA, taskB) => {
-//   const weight = getWeightForNullDate(taskA.dueDate, taskB.dueDate);
-//
-//   if (weight !== null) {
-//     return weight;
-//   }
-//
-//   return dayjs(taskB.dueDate).diff(dayjs(taskA.dueDate));
-// };
