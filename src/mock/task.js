@@ -64,7 +64,7 @@ const generateCommentText = () => {
   return getArrayElement(COMMENTS);
 };
 
-const generateCommentDate = () => {
+export const generateCommentDate = () => {
   return generateDate();
 };
 
@@ -79,7 +79,7 @@ const generateDuration = () => {
   return hours + `h ` + minutes + `m`;
 };
 
-const generateCommentAuthor = () => {
+export const generateCommentAuthor = () => {
   return getArrayElement(AUTHORS);
 };
 
@@ -93,6 +93,7 @@ const generateComments = () => {
 
   for (let i = 0; i < commentsCount; i++) {
     comments.push({
+      id: generateId(),
       author: generateCommentAuthor(),
       text: generateCommentText(),
       emoji: generateCommentEmoji(),
@@ -104,9 +105,9 @@ const generateComments = () => {
 };
 
 export function generateTask() {
-  const comments = generateComments();
 
   return {
+    isAll: true,
     id: generateId(),
     title: generateTitle(),
     poster: generatePoster(),
@@ -120,7 +121,7 @@ export function generateTask() {
     genres: generateGenres(),
     country: generateCountry(),
     age: generateAgeRating(),
-    comments,
+    comments: generateComments(),
     isWatched: Boolean(getRandomInteger(0, 1)),
     isWatchlist: Boolean(getRandomInteger(0, 1)),
     isFavorite: Boolean(getRandomInteger(0, 1))

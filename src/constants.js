@@ -1,3 +1,29 @@
+export const FilterType = {
+  ALL: `all`,
+  WATCHLIST: `watchlist`,
+  HISTORY: `history`,
+  FAVORITES: `favorites`
+};
+export const NavigationNames = {
+  watchlist: `Watchlist`,
+  history: `History`,
+  favorites: `Favorites`
+};
+export const UserAction = {
+  UPDATE_MOVIE: `UPDATE_MOVIE`,
+  ADD_COMMENT: `ADD_COMMENT`,
+  DELETE_COMMENT: `DELETE_COMMENT`
+};
+export const UpdateType = {
+  PATCH: `PATCH`,
+  MINOR: `MINOR`,
+  MAJOR: `MAJOR`
+};
+export const SortType = {
+  DEFAULT: `default`,
+  DATE: `date`,
+  RATING: `rating`
+};
 export const DESCRIPTIONS = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget.`,
   `Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.`,
@@ -98,11 +124,6 @@ export const StringCount = {
 export const CommentCount = {
   MIN: 0,
   MAX: 5
-};
-export const NavigationNames = {
-  watchlist: `Watchlist`,
-  history: `History`,
-  favorites: `Favorites`
 };
 export const MAX_EXTRA_CARD_COUNT = 2;
 export const TASKS_COUNT = 22;
