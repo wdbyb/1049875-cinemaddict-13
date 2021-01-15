@@ -56,6 +56,10 @@ export default class MovieListPresenter {
         this._clearMoviesList({something: true});
         this._renderMoviesList();
         break;
+      case UpdateType.INIT:
+        this._clearMoviesList({something: true});
+        this._renderMoviesList();
+        break;
     }
   }
 

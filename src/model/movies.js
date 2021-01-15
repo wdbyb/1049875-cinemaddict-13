@@ -6,8 +6,10 @@ export default class Movies extends Observer {
     this._movies = [];
   }
 
-  setMovies(movies) {
+  setMovies(updateType, movies) {
     this._movies = movies.slice();
+
+    this._notify(updateType);
   }
 
   getMovies() {
@@ -32,25 +34,26 @@ export default class Movies extends Observer {
 
   static adaptToClient(movie) {
     const adaptedMovies = Object.assign(
-      {},
-      movie,
-      {
-        title: movie.film_info.title,
-        poster: movie.film_info.poster,
-        age: movie.film_info.age_rating,
-        duration: movie.film_info.runtime,
-        rating: movie.film_info.total_rating,
-        year: movie.film_info.release.date,
-        country: movie.film_info.release.release_country,
-        description: movie.film_info.description,
-        director: movie.film_info.director,
-        writers: movie.film_info.writers,
-        actors: movie.film_info.actors,
-        genres: movie.film_info.genre,
-        isWatched: movie.user_details.already_watched,
-        isWatchlist: movie.user_details.watchlist,
-        isFavorite: movie.user_details.favorite
-      }
+        {},
+        movie,
+        {
+          isAll: true,
+          title: movie.film_info.title,
+          poster: movie.film_info.poster,
+          age: movie.film_info.age_rating,
+          duration: movie.film_info.runtime,
+          rating: movie.film_info.total_rating,
+          year: movie.film_info.release.date,
+          country: movie.film_info.release.release_country,
+          description: movie.film_info.description,
+          director: movie.film_info.director,
+          writers: movie.film_info.writers,
+          actors: movie.film_info.actors,
+          genres: movie.film_info.genre,
+          isWatched: movie.user_details.already_watched,
+          isWatchlist: movie.user_details.watchlist,
+          isFavorite: movie.user_details.favorite
+        }
     );
 
     delete adaptedMovies.film_info.title;
