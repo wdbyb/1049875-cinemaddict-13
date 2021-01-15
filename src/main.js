@@ -7,6 +7,7 @@ import MovieListPresenter from "./presenter/movie-list.js";
 import MoviesModel from "./model/movies.js";
 import FilterModel from "./model/filter.js";
 import FilterPresenter from "./presenter/filter.js";
+import Api from "./api.js";
 
 const siteBodyElement = document.querySelector(`body`);
 const siteHeaderElement = siteBodyElement.querySelector(`.header`);
@@ -15,6 +16,14 @@ const siteFooterElement = siteBodyElement.querySelector(`.footer`);
 const siteFooterStatisticsElement = siteFooterElement.querySelector(`.footer__statistics`);
 
 const movies = new Array(TASKS_COUNT).fill().map(generateTask);
+const AUTHORIZATION = `Basic wl638djdf654yzde`;
+const END_POINT = `https://13.ecmascript.pages.academy/cinemaddict`;
+
+const api = new Api(END_POINT, AUTHORIZATION);
+
+api.getMovies().then((noo) => {
+  console.log(noo);
+});
 
 const moviesModel = new MoviesModel();
 moviesModel.setMovies(movies);
