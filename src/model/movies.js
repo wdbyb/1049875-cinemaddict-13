@@ -32,6 +32,59 @@ export default class Movies extends Observer {
     this._notify(updateType, update);
   }
 
+  static adaptToServer(movie) {
+    const adaptedMovies = Object.assign(
+        {},
+        movie,
+        {
+          "film_info": {
+            "title": movie.title,
+            "poster": movie.poster,
+            "age_rating": movie.age,
+            "runtime": movie.duration,
+            "total_rating": movie.rating,
+            "director": movie.director,
+            "writers": movie.writers,
+            "actors": movie.actors,
+            "description": movie.description,
+            "alternative_title": movie.alternativeTitle,
+            "genre": movie.genres,
+            "release": {
+              "date": movie.year,
+              "release_country": movie.country,
+            },
+          },
+          "user_details": {
+            "already_watched": movie.isWatched,
+            "watchlist": movie.isWatchlist,
+            "favorite": movie.isFavorite,
+            "watching_date": movie.watchingDate
+          }
+        }
+    );
+
+    delete adaptedMovies.title;
+    delete adaptedMovies.poster;
+    delete adaptedMovies.age;
+    delete adaptedMovies.duration;
+    delete adaptedMovies.rating;
+    delete adaptedMovies.year;
+    delete adaptedMovies.country;
+    delete adaptedMovies.description;
+    delete adaptedMovies.director;
+    delete adaptedMovies.writers;
+    delete adaptedMovies.actors;
+    delete adaptedMovies.genres;
+    delete adaptedMovies.isWatched;
+    delete adaptedMovies.isWatchlist;
+    delete adaptedMovies.isFavorite;
+    delete adaptedMovies.isAll;
+    delete adaptedMovies.watchingDate;
+    delete adaptedMovies.alternativeTitle;
+
+    return adaptedMovies;
+  }
+
   static adaptToClient(movie) {
     const adaptedMovies = Object.assign(
         {},
@@ -52,25 +105,14 @@ export default class Movies extends Observer {
           genres: movie.film_info.genre,
           isWatched: movie.user_details.already_watched,
           isWatchlist: movie.user_details.watchlist,
-          isFavorite: movie.user_details.favorite
+          isFavorite: movie.user_details.favorite,
+          alternativeTitle: movie.film_info.alternative_title,
+          watchingDate: movie.user_details.watching_date
         }
     );
 
-    delete adaptedMovies.film_info.title;
-    delete adaptedMovies.film_info.poster;
-    delete adaptedMovies.film_info.age_rating;
-    delete adaptedMovies.film_info.runtime;
-    delete adaptedMovies.film_info.total_rating;
-    delete adaptedMovies.film_info.release.date;
-    delete adaptedMovies.film_info.release.release_country;
-    delete adaptedMovies.film_info.description;
-    delete adaptedMovies.film_info.director;
-    delete adaptedMovies.film_info.writers;
-    delete adaptedMovies.film_info.actors;
-    delete adaptedMovies.film_info.genre;
-    delete adaptedMovies.user_details.already_watched;
-    delete adaptedMovies.user_details.watchlist;
-    delete adaptedMovies.user_details.favorite;
+    delete adaptedMovies.film_info;
+    delete adaptedMovies.user_details;
 
     return adaptedMovies;
   }

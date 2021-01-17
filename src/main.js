@@ -18,26 +18,27 @@ const siteFooterStatisticsElement = siteFooterElement.querySelector(`.footer__st
 
 const api = new Api(END_POINT, AUTHORIZATION);
 const moviesModel = new MoviesModel();
-
-api.getMovies()
-  .then((movies) => {
-    console.log(movies);
-    moviesModel.setMovies(UpdateType.INIT, movies);
-  })
-  .catch(() => {
-    moviesModel.setMovies(UpdateType.INIT, []);
-  });
-
 const filterModel = new FilterModel();
-const profileRating = new ProfileRating();
-const statistics = new Statistics();
-
-render(siteHeaderElement, profileRating, RenderPosition.BEFOREEND);
-render(siteFooterStatisticsElement, statistics, RenderPosition.BEFOREEND);
-
-const movieList = new MovieListPresenter(siteMainElement, moviesModel, filterModel);
+const movieList = new MovieListPresenter(siteMainElement, moviesModel, filterModel, api);
 const filterPresenter = new FilterPresenter(siteMainElement, filterModel, moviesModel);
 
 filterPresenter.init();
-
 movieList.init();
+
+api.getMovies()
+  .then((movies) => {
+    moviesModel.setMovies(UpdateType.INIT, movies);
+    const profileRating = new ProfileRating();
+    const statistics = new Statistics();
+
+    render(siteHeaderElement, profileRating, RenderPosition.BEFOREEND);
+    render(siteFooterStatisticsElement, statistics, RenderPosition.BEFOREEND);
+  })
+  .catch(() => {
+    moviesModel.setMovies(UpdateType.INIT, []);
+    const profileRating = new ProfileRating();
+    const statistics = new Statistics();
+
+    render(siteHeaderElement, profileRating, RenderPosition.BEFOREEND);
+    render(siteFooterStatisticsElement, statistics, RenderPosition.BEFOREEND);
+  });
