@@ -51,8 +51,9 @@ export default class Movies extends Observer {
   static adaptToServer(movie) {
     const adaptedMovies = Object.assign(
         {},
-        movie,
         {
+          "id": movie.id,
+          "comments": movie.comments,
           "film_info": {
             "title": movie.title,
             "poster": movie.poster,
@@ -78,25 +79,6 @@ export default class Movies extends Observer {
           }
         }
     );
-
-    delete adaptedMovies.title;
-    delete adaptedMovies.poster;
-    delete adaptedMovies.age;
-    delete adaptedMovies.duration;
-    delete adaptedMovies.rating;
-    delete adaptedMovies.year;
-    delete adaptedMovies.country;
-    delete adaptedMovies.description;
-    delete adaptedMovies.director;
-    delete adaptedMovies.writers;
-    delete adaptedMovies.actors;
-    delete adaptedMovies.genres;
-    delete adaptedMovies.isWatched;
-    delete adaptedMovies.isWatchlist;
-    delete adaptedMovies.isFavorite;
-    delete adaptedMovies.isAll;
-    delete adaptedMovies.watchingDate;
-    delete adaptedMovies.alternativeTitle;
 
     return adaptedMovies;
   }
