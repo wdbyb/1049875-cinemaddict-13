@@ -32,6 +32,22 @@ export default class Movies extends Observer {
     this._notify(updateType, update);
   }
 
+  static adaptCommentToClient(comment) {
+    const adaptedComment = Object.assign(
+        {},
+        comment,
+        {
+          text: comment.comment,
+          emoji: comment.emotion
+        }
+    );
+
+    delete comment.comment;
+    delete comment.emotion;
+
+    return adaptedComment;
+  }
+
   static adaptToServer(movie) {
     const adaptedMovies = Object.assign(
         {},

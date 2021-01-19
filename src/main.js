@@ -28,6 +28,7 @@ movieList.init();
 api.getMovies()
   .then((movies) => {
     moviesModel.setMovies(UpdateType.INIT, movies);
+
     const profileRating = new ProfileRating();
     const statistics = new Statistics();
 

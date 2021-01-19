@@ -158,7 +158,11 @@ export default class MovieListPresenter {
     const cardView = new CardView(film);
 
     cardView.setClickHandlerOnFilm(() => {
-      this._renderPopup(film);
+      this._api.getComments(film.id)
+        .then((comments) => {
+          film.comments = comments;
+          this._renderPopup(film);
+        });
     });
 
     cardView.setClickHandlerOnWatched(() => {
