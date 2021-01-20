@@ -10,10 +10,11 @@ import {render, remove, RenderPosition} from "../utils/render.js";
 import {filter} from "../utils/common.js";
 
 export default class MovieListPresenter {
-  constructor(movieContainer, moviesModel, filterModel) {
+  constructor(movieContainer, moviesModel, filterModel, api) {
     this._movieContainer = movieContainer;
     this._moviesModel = moviesModel;
     this._filterModel = filterModel;
+    this._api = api;
     this._filmPresenter = {};
     this._currentSortType = SortType.DEFAULT;
 
@@ -56,19 +57,24 @@ export default class MovieListPresenter {
         this._clearMoviesList({something: true});
         this._renderMoviesList();
         break;
+      case UpdateType.INIT:
+        this._clearMoviesList({something: true});
+        this._renderMoviesList();
+        break;
     }
   }
 
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_MOVIE:
-        this._moviesModel.updateMovie(updateType, update);
+        this._api.updateMovie(updateType, update).then((response) => {
+          this._moviesModel.updateMovie(updateType, response);
+        });
         break;
     }
   }
 
   _getMovies() {
-    // const foo = this._moviesModel.getMovies();
     const filterType = this._filterModel.getFilter();
     const movies = this._moviesModel.getMovies();
     const filtredTasks = filter[filterType](movies);
@@ -152,7 +158,11 @@ export default class MovieListPresenter {
     const cardView = new CardView(film);
 
     cardView.setClickHandlerOnFilm(() => {
-      this._renderPopup(film);
+      this._api.getComments(film.id)
+        .then((comments) => {
+          film.comments = comments;
+          this._renderPopup(film);
+        });
     });
 
     cardView.setClickHandlerOnWatched(() => {
