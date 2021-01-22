@@ -161,16 +161,16 @@ export default class Popup extends Smart {
     this._task = task;
     this._comments = task.comments;
 
-    this._watchlistToggleHandler = this._watchlistToggleHandler.bind(this);
-    this._watchedToggleHandler = this._watchedToggleHandler.bind(this);
-    this._favoriteToggleHandler = this._favoriteToggleHandler.bind(this);
-    this._descriptionInputHandler = this._descriptionInputHandler.bind(this);
-    this._emojiToggleHandler = this._emojiToggleHandler.bind(this);
-    this._scrollTopHandler = this._scrollTopHandler.bind(this);
-    this._clickHandler = this._clickHandler.bind(this);
     this._clickHandlerOnWatchlist = this._clickHandlerOnWatchlist.bind(this);
     this._clickHandlerOnWatched = this._clickHandlerOnWatched.bind(this);
     this._clickHandlerOnFavorite = this._clickHandlerOnFavorite.bind(this);
+    this._clickHandlerOnComment = this._clickHandlerOnComment.bind(this);
+
+    this._clickHandlerCloseBtn = this._clickHandlerCloseBtn.bind(this);
+
+    this._descriptionInputHandler = this._descriptionInputHandler.bind(this);
+    this._emojiToggleHandler = this._emojiToggleHandler.bind(this);
+    this._scrollTopHandler = this._scrollTopHandler.bind(this);
     this._commentDeleteHandler = this._commentDeleteHandler.bind(this);
     this._commentAddHandler = this._commentAddHandler.bind(this);
 
@@ -183,32 +183,32 @@ export default class Popup extends Smart {
 
   restoreHandlers() {
     this._setInnerHandlers();
-    this.setClickHandler(this._callback.click);
+    this.setClickHandlerCloseBtn(this._callback.clickCloseBtn);
+    this.setClickHandlerOnWatchlist(this._callback.clickOnWatchlist);
+    this.setClickHandlerOnWatched(this._callback.clickOnWatched);
+    this.setClickHandlerOnFavorite(this._callback.clickOnFavorite);
     this.getElement().scrollTop = this._task.pageY;
   }
 
   _setInnerHandlers() {
-    this.getElement().querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, this._watchlistToggleHandler);
-    this.getElement().querySelector(`.film-details__control-label--watched`).addEventListener(`click`, this._watchedToggleHandler);
-    this.getElement().querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._favoriteToggleHandler);
     this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, this._descriptionInputHandler);
     this.getElement().addEventListener(`scroll`, this._scrollTopHandler);
-    this.getElement().querySelector(`#emoji-smile`).addEventListener(`click`, this._emojiToggleHandler);
-    this.getElement().querySelector(`#emoji-puke`).addEventListener(`click`, this._emojiToggleHandler);
-    this.getElement().querySelector(`#emoji-angry`).addEventListener(`click`, this._emojiToggleHandler);
-    this.getElement().querySelector(`#emoji-sleeping`).addEventListener(`click`, this._emojiToggleHandler);
-    this.getElement().querySelector(`.film-details__inner`).addEventListener(`keyup`, this._commentAddHandler);
+    // this.getElement().querySelector(`#emoji-smile`).addEventListener(`click`, this._emojiToggleHandler);
+    // this.getElement().querySelector(`#emoji-puke`).addEventListener(`click`, this._emojiToggleHandler);
+    // this.getElement().querySelector(`#emoji-angry`).addEventListener(`click`, this._emojiToggleHandler);
+    // this.getElement().querySelector(`#emoji-sleeping`).addEventListener(`click`, this._emojiToggleHandler);
+    // this.getElement().querySelector(`.film-details__inner`).addEventListener(`keyup`, this._commentAddHandler);
 
-    const myArr = this.getElement().querySelectorAll(`.film-details__comment-delete`);
-    myArr.forEach((element) => element.addEventListener(`click`, this._commentDeleteHandler));
+    // const myArr = this.getElement().querySelectorAll(`.film-details__comment-delete`);
+    // myArr.forEach((element) => element.addEventListener(`click`, this._commentDeleteHandler));
   }
 
   _commentAddHandler(evt) {
     evt.preventDefault();
     if (evt.ctrlKey && evt.key === `Enter`) {
       const newComment = {
-        id: generateId(),
-        author: generateCommentAuthor(),
+        // id: generateId(),
+        // author: generateCommentAuthor(),
         text: this._task.inputText,
         emoji: this.getElement().querySelector(`.film-details__emoji-item:checked`).value,
         date: generateCommentDate()
@@ -256,51 +256,53 @@ export default class Popup extends Smart {
     }, true);
   }
 
-  _watchlistToggleHandler(evt) {
+  _clickHandlerCloseBtn(evt) {
     evt.preventDefault();
-    this.updateData({
-      isWatchlist: !this._task.isWatchlist
-    });
+    this._callback.clickCloseBtn();
   }
 
-  _watchedToggleHandler(evt) {
-    evt.preventDefault();
-    this.updateData({
-      isWatched: !this._task.isWatched
-    });
-  }
-
-  _favoriteToggleHandler(evt) {
-    evt.preventDefault();
-    this.updateData({
-      isFavorite: !this._task.isFavorite
-    });
-  }
-
-  _clickHandler(evt) {
-    evt.preventDefault();
-    this._callback.click();
-  }
-
-  setClickHandler(callback) {
-    this._callback.click = callback;
-    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._clickHandler);
+  setClickHandlerCloseBtn(callback) {
+    this._callback.clickCloseBtn = callback;
+    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._clickHandlerCloseBtn);
   }
 
   _clickHandlerOnWatchlist(evt) {
     evt.preventDefault();
     this._callback.clickOnWatchlist();
+    this.updateData({
+      isWatchlist: !this._task.isWatchlist
+    });
   }
 
   _clickHandlerOnWatched(evt) {
     evt.preventDefault();
     this._callback.clickOnWatched();
+    this.updateData({
+      isWatched: !this._task.isWatched
+    });
   }
 
   _clickHandlerOnFavorite(evt) {
     evt.preventDefault();
     this._callback.clickOnFavorite();
+    this.updateData({
+      isFavorite: !this._task.isFavorite
+    });
+  }
 
+  _clickHandlerOnComment(evt) {
+    evt.preventDefault();
+    if (evt.ctrlKey && evt.key === `Enter`) {
+      this._callback.clickOnComment();
+    }
+  }
+
+  setClickHandlerOnComment(callback) {
+    this._callback.clickOnComment = callback;
+    this.getElement().querySelector(`.film-details__inner`).addEventListener(`keyup`, (evt) => {
+      console.log(`setClickHandlerOnComment`);
+      this._clickHandlerOnComment(evt);
+    });
   }
 
   setClickHandlerOnWatchlist(callback) {

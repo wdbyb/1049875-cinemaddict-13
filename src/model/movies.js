@@ -80,6 +80,20 @@ export default class Movies extends Observer {
         }
     );
 
+    const onlyId = (arr) => {
+      const emptyArr = [];
+
+      arr.forEach((comment) => {
+        if (comment !== String(comment)) {
+          emptyArr.push(comment.id);
+        }
+      });
+
+      return emptyArr;
+    };
+
+    adaptedMovies.comments = onlyId(adaptedMovies.comments);
+
     return adaptedMovies;
   }
 

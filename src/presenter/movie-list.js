@@ -71,6 +71,11 @@ export default class MovieListPresenter {
           this._moviesModel.updateMovie(updateType, response);
         });
         break;
+      case UserAction.ADD_COMMENT:
+        this._api.addComment(updateType, update).then((response) => {
+          this._moviesModel.updateMovie(updateType, response);
+        });
+        break;
     }
   }
 
@@ -147,7 +152,11 @@ export default class MovieListPresenter {
       this._handleFavoriteClick(film);
     });
 
-    popup.setClickHandler(() => {
+    popup.setClickHandlerOnComment(() => {
+      this._handleCommentClick(film);
+    });
+
+    popup.setClickHandlerCloseBtn(() => {
       remove(popup);
 
       this._bodyElement.classList.remove(`hide-overflow`);
@@ -158,7 +167,7 @@ export default class MovieListPresenter {
     const cardView = new CardView(film);
 
     cardView.setClickHandlerOnFilm(() => {
-      this._api.getComments(film.id)
+      this._api.getComments(film)
         .then((comments) => {
           film.comments = comments;
           this._renderPopup(film);
@@ -236,6 +245,22 @@ export default class MovieListPresenter {
     this._renderRatedFilmsContainer();
     this._renderCommentedFilmsContainer();
     this._renderShowMoreButton();
+  }
+
+  _handleCommentClick(film) {
+    // this._handleViewAction(
+    //     UserAction.UPDATE_MOVIE,
+    //     UpdateType.MINOR,
+    //     Object.assign(
+    //         {},
+    //         film,
+    //         {
+    //           isWatchlist: !film.isWatchlist
+    //         }
+    //     )
+    // );
+
+    console.log(1);
   }
 
   _handleWatchlistClick(film) {
