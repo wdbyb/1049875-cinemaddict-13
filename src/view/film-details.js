@@ -187,6 +187,7 @@ export default class Popup extends Smart {
     this.setClickHandlerOnWatched(this._callback.clickOnWatched);
     this.setClickHandlerOnFavorite(this._callback.clickOnFavorite);
     this.setClickHandlerOnComment(this._callback.clickOnComment);
+    this.setClickHandlerDeleteComment(this._callback.clickDeleteComment);
     this.getElement().scrollTop = this._task.pageY;
   }
 
@@ -208,7 +209,7 @@ export default class Popup extends Smart {
   _commentDeleteHandler(evt) {
     evt.preventDefault();
 
-    const commentId = parseInt(evt.target.id, 10);
+    const commentId = evt.target.id;
     const changedComments = this._comments.filter((item) => item.id !== commentId);
 
     this._comments = changedComments;
@@ -216,6 +217,14 @@ export default class Popup extends Smart {
     this.updateData({
       comments: changedComments
     });
+
+    this._callback.clickDeleteComment(commentId);
+  }
+
+  setClickHandlerDeleteComment(callback) {
+    this._callback.clickDeleteComment = callback;
+    const myArr = this.getElement().querySelectorAll(`.film-details__comment-delete`);
+    myArr.forEach((element) => element.addEventListener(`click`, this._commentDeleteHandler));
   }
 
   _scrollTopHandler(evt) {

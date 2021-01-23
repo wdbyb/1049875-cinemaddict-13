@@ -41,6 +41,13 @@ export default class Api {
       .then(MoviesModel.adaptToClientWithComments);
   }
 
+  deleteComment(updateType, commentId) {
+    return this._load({
+      url: `comments/${commentId}`,
+      method: Method.DELETE,
+    });
+  }
+
   updateMovie(updateType, movie) {
     return this._load({
       url: `movies/${movie.id}`,

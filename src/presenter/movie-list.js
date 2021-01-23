@@ -35,6 +35,7 @@ export default class MovieListPresenter {
     this._handlePopupFavoriteClick = this._handlePopupFavoriteClick.bind(this);
     this._handlePopupWatchedClick = this._handlePopupWatchedClick.bind(this);
     this._handlePopupCommentPost = this._handlePopupCommentPost.bind(this);
+    this._handlePopupCommentDelete = this._handlePopupCommentDelete.bind(this);
 
     this._moviesModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
@@ -57,9 +58,6 @@ export default class MovieListPresenter {
       case UpdateType.MINOR:
         this._clearMoviesList();
         this._renderMoviesList();
-        // console.log(data);
-        // отрисовывать попап
-        // this._renderPopup(data);
         break;
       case UpdateType.MAJOR:
         this._clearMoviesList({something: true});
@@ -83,6 +81,12 @@ export default class MovieListPresenter {
         this._api.addComment(updateType, update).then((response) => {
           this._moviesModel.updateMovie(updateType, response);
         });
+        break;
+      case UserAction.DELETE_COMMENT:
+        this._api.deleteComment(updateType, update);
+        // .then((response) => {
+        //   this._moviesModel.updateMovie(updateType, response);
+        // });
         break;
     }
   }
@@ -142,10 +146,6 @@ export default class MovieListPresenter {
   }
 
   _renderPopup(film) {
-    //получать данные film и тут делать запрос на сервер, а не в карточке как это происходит сейчас
-    // но это не работает так как запрос асинхронен
-    // но есть вариант чтобы поместить весь код ниже в следующий then после загрузки
-
     this._api.getComments(film)
       .then((comments) => {
         film.comments = comments;
@@ -166,6 +166,8 @@ export default class MovieListPresenter {
 
         popup.setClickHandlerOnComment(this._handlePopupCommentPost);
 
+        popup.setClickHandlerDeleteComment(this._handlePopupCommentDelete);
+
         popup.setClickHandlerCloseBtn(() => {
           remove(popup);
 
@@ -178,11 +180,6 @@ export default class MovieListPresenter {
     const cardView = new CardView(film);
 
     cardView.setClickHandlerOnFilm(() => {
-      // this._api.getComments(film)
-      //   .then((comments) => {
-      //     film.comments = comments;
-      //
-      //   });
         this._renderPopup(film);
     });
 
@@ -264,6 +261,14 @@ export default class MovieListPresenter {
         UserAction.ADD_COMMENT,
         UpdateType.MINOR,
         film
+    );
+  }
+
+  _handlePopupCommentDelete(comId) {
+    this._handleViewAction(
+        UserAction.DELETE_COMMENT,
+        UpdateType.MINOR,
+        comId
     );
   }
 

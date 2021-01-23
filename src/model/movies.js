@@ -145,8 +145,6 @@ export default class Movies extends Observer {
     delete adaptedMovies.film_info;
     delete adaptedMovies.user_details;
 
-    console.log(adaptedMovies);
-
     return adaptedMovies;
   }
 
