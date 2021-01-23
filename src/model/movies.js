@@ -48,7 +48,21 @@ export default class Movies extends Observer {
     return adaptedComment;
   }
 
-  static adaptToServer(movie) {
+  static adaptCommentToServer(film) {
+    const lastComment = film.comments.pop();
+    const adaptedComment = Object.assign(
+        {},
+        {
+          comment: lastComment.text,
+          emotion: lastComment.emoji,
+          date: lastComment.date
+        }
+    );
+
+    return adaptedComment;
+  }
+
+  static adaptToServer(movie, withCommentsId) {
     const adaptedMovies = Object.assign(
         {},
         {
@@ -80,19 +94,58 @@ export default class Movies extends Observer {
         }
     );
 
-    const onlyId = (arr) => {
-      const emptyArr = [];
+    if (withCommentsId) {
+      const onlyId = (arr) => {
+        const emptyArr = [];
 
-      arr.forEach((comment) => {
-        if (comment !== String(comment)) {
-          emptyArr.push(comment.id);
+        arr.forEach((comment) => {
+          if (comment !== String(comment)) {
+            emptyArr.push(comment.id);
+          }
+        });
+
+        return emptyArr;
+      };
+
+      adaptedMovies.comments = onlyId(adaptedMovies.comments);
+    }
+
+    return adaptedMovies;
+  }
+
+  static adaptToClientWithComments(movie) {
+    const adaptedMovies = Object.assign(
+        {},
+        movie,
+        {
+          id: movie.movie.id,
+          comments: movie.comments,
+          isAll: true,
+          title: movie.movie.film_info.title,
+          poster: movie.movie.film_info.poster,
+          age: movie.movie.film_info.age_rating,
+          duration: movie.movie.film_info.runtime,
+          rating: movie.movie.film_info.total_rating,
+          year: movie.movie.film_info.release.date,
+          country: movie.movie.film_info.release.release_country,
+          description: movie.movie.film_info.description,
+          director: movie.movie.film_info.director,
+          writers: movie.movie.film_info.writers,
+          actors: movie.movie.film_info.actors,
+          genres: movie.movie.film_info.genre,
+          isWatched: movie.movie.user_details.already_watched,
+          isWatchlist: movie.movie.user_details.watchlist,
+          isFavorite: movie.movie.user_details.favorite,
+          alternativeTitle: movie.movie.film_info.alternative_title,
+          watchingDate: movie.movie.user_details.watching_date
         }
-      });
+    );
 
-      return emptyArr;
-    };
+    delete adaptedMovies.movie;
+    delete adaptedMovies.film_info;
+    delete adaptedMovies.user_details;
 
-    adaptedMovies.comments = onlyId(adaptedMovies.comments);
+    console.log(adaptedMovies);
 
     return adaptedMovies;
   }

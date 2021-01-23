@@ -164,7 +164,6 @@ export default class Popup extends Smart {
     this._clickHandlerOnWatchlist = this._clickHandlerOnWatchlist.bind(this);
     this._clickHandlerOnWatched = this._clickHandlerOnWatched.bind(this);
     this._clickHandlerOnFavorite = this._clickHandlerOnFavorite.bind(this);
-    this._clickHandlerOnComment = this._clickHandlerOnComment.bind(this);
 
     this._clickHandlerCloseBtn = this._clickHandlerCloseBtn.bind(this);
 
@@ -187,6 +186,7 @@ export default class Popup extends Smart {
     this.setClickHandlerOnWatchlist(this._callback.clickOnWatchlist);
     this.setClickHandlerOnWatched(this._callback.clickOnWatched);
     this.setClickHandlerOnFavorite(this._callback.clickOnFavorite);
+    this.setClickHandlerOnComment(this._callback.clickOnComment);
     this.getElement().scrollTop = this._task.pageY;
   }
 
@@ -203,24 +203,7 @@ export default class Popup extends Smart {
     // myArr.forEach((element) => element.addEventListener(`click`, this._commentDeleteHandler));
   }
 
-  _commentAddHandler(evt) {
-    evt.preventDefault();
-    if (evt.ctrlKey && evt.key === `Enter`) {
-      const newComment = {
-        // id: generateId(),
-        // author: generateCommentAuthor(),
-        text: this._task.inputText,
-        emoji: this.getElement().querySelector(`.film-details__emoji-item:checked`).value,
-        date: generateCommentDate()
-      };
 
-      this._comments.push(newComment);
-
-      this.updateData({
-        comments: this._comments
-      });
-    }
-  }
 
   _commentDeleteHandler(evt) {
     evt.preventDefault();
@@ -268,41 +251,50 @@ export default class Popup extends Smart {
 
   _clickHandlerOnWatchlist(evt) {
     evt.preventDefault();
-    this._callback.clickOnWatchlist();
     this.updateData({
       isWatchlist: !this._task.isWatchlist
     });
+    this._callback.clickOnWatchlist(this._task);
   }
 
   _clickHandlerOnWatched(evt) {
     evt.preventDefault();
-    this._callback.clickOnWatched();
     this.updateData({
       isWatched: !this._task.isWatched
     });
+    this._callback.clickOnWatched(this._task);
   }
 
   _clickHandlerOnFavorite(evt) {
     evt.preventDefault();
-    this._callback.clickOnFavorite();
     this.updateData({
       isFavorite: !this._task.isFavorite
     });
+    this._callback.clickOnFavorite(this._task);
   }
 
-  _clickHandlerOnComment(evt) {
+  _commentAddHandler(evt) {
     evt.preventDefault();
     if (evt.ctrlKey && evt.key === `Enter`) {
-      this._callback.clickOnComment();
+      const newComment = {
+        text: this._task.inputText,
+        emoji: this.getElement().querySelector(`.film-details__emoji-item:checked`).value,
+        date: generateCommentDate()
+      };
+
+      this._comments.push(newComment);
+
+      this.updateData({
+        comments: this._comments
+      });
+
+      this._callback.clickOnComment(this._task);
     }
   }
 
   setClickHandlerOnComment(callback) {
     this._callback.clickOnComment = callback;
-    this.getElement().querySelector(`.film-details__inner`).addEventListener(`keyup`, (evt) => {
-      console.log(`setClickHandlerOnComment`);
-      this._clickHandlerOnComment(evt);
-    });
+    this.getElement().querySelector(`.film-details__inner`).addEventListener(`keyup`, this._commentAddHandler);
   }
 
   setClickHandlerOnWatchlist(callback) {

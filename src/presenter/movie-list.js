@@ -16,6 +16,7 @@ export default class MovieListPresenter {
     this._filterModel = filterModel;
     this._api = api;
     this._filmPresenter = {};
+    this._popup = null;
     this._currentSortType = SortType.DEFAULT;
 
     this._renderedFilmsCount = TASKS_COUNT_PER_STEP;
@@ -30,6 +31,10 @@ export default class MovieListPresenter {
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+    this._handlePopupWatchlistClick = this._handlePopupWatchlistClick.bind(this);
+    this._handlePopupFavoriteClick = this._handlePopupFavoriteClick.bind(this);
+    this._handlePopupWatchedClick = this._handlePopupWatchedClick.bind(this);
+    this._handlePopupCommentPost = this._handlePopupCommentPost.bind(this);
 
     this._moviesModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
@@ -52,6 +57,9 @@ export default class MovieListPresenter {
       case UpdateType.MINOR:
         this._clearMoviesList();
         this._renderMoviesList();
+        // console.log(data);
+        // отрисовывать попап
+        // this._renderPopup(data);
         break;
       case UpdateType.MAJOR:
         this._clearMoviesList({something: true});
@@ -134,56 +142,60 @@ export default class MovieListPresenter {
   }
 
   _renderPopup(film) {
-    const popup = new PopupView(film);
+    //получать данные film и тут делать запрос на сервер, а не в карточке как это происходит сейчас
+    // но это не работает так как запрос асинхронен
+    // но есть вариант чтобы поместить весь код ниже в следующий then после загрузки
 
-    render(this._bodyElement, popup, RenderPosition.BEFOREEND);
+    this._api.getComments(film)
+      .then((comments) => {
+        film.comments = comments;
 
-    this._bodyElement.classList.add(`hide-overflow`);
+        const popup = new PopupView(film);
 
-    popup.setClickHandlerOnWatched(() => {
-      this._handleWatchedClick(film);
-    });
+        this._popup = popup;
 
-    popup.setClickHandlerOnWatchlist(() => {
-      this._handleWatchlistClick(film);
-    });
+        render(this._bodyElement, popup, RenderPosition.BEFOREEND);
 
-    popup.setClickHandlerOnFavorite(() => {
-      this._handleFavoriteClick(film);
-    });
+        this._bodyElement.classList.add(`hide-overflow`);
 
-    popup.setClickHandlerOnComment(() => {
-      this._handleCommentClick(film);
-    });
+        popup.setClickHandlerOnWatched(this._handlePopupWatchedClick);
 
-    popup.setClickHandlerCloseBtn(() => {
-      remove(popup);
+        popup.setClickHandlerOnWatchlist(this._handlePopupWatchlistClick);
 
-      this._bodyElement.classList.remove(`hide-overflow`);
-    });
+        popup.setClickHandlerOnFavorite(this._handlePopupFavoriteClick);
+
+        popup.setClickHandlerOnComment(this._handlePopupCommentPost);
+
+        popup.setClickHandlerCloseBtn(() => {
+          remove(popup);
+
+          this._bodyElement.classList.remove(`hide-overflow`);
+        });
+      });
   }
 
   _renderCard(container, film) {
     const cardView = new CardView(film);
 
     cardView.setClickHandlerOnFilm(() => {
-      this._api.getComments(film)
-        .then((comments) => {
-          film.comments = comments;
-          this._renderPopup(film);
-        });
+      // this._api.getComments(film)
+      //   .then((comments) => {
+      //     film.comments = comments;
+      //
+      //   });
+        this._renderPopup(film);
     });
 
     cardView.setClickHandlerOnWatched(() => {
-      this._handleWatchedClick(film);
+      this._handleCardWatchedClick(film);
     });
 
     cardView.setClickHandlerOnWatchlist(() => {
-      this._handleWatchlistClick(film);
+      this._handleCardWatchlistClick(film);
     });
 
     cardView.setClickHandlerOnFavorite(() => {
-      this._handleFavoriteClick(film);
+      this._handleCardFavoriteClick(film);
     });
 
     this._filmPresenter[film.id] = cardView;
@@ -247,23 +259,39 @@ export default class MovieListPresenter {
     this._renderShowMoreButton();
   }
 
-  _handleCommentClick(film) {
-    // this._handleViewAction(
-    //     UserAction.UPDATE_MOVIE,
-    //     UpdateType.MINOR,
-    //     Object.assign(
-    //         {},
-    //         film,
-    //         {
-    //           isWatchlist: !film.isWatchlist
-    //         }
-    //     )
-    // );
-
-    console.log(1);
+  _handlePopupCommentPost(film) {
+    this._handleViewAction(
+        UserAction.ADD_COMMENT,
+        UpdateType.MINOR,
+        film
+    );
   }
 
-  _handleWatchlistClick(film) {
+  _handlePopupWatchlistClick(film) {
+    this._handleViewAction(
+        UserAction.UPDATE_MOVIE,
+        UpdateType.MINOR,
+        film
+    );
+  }
+
+  _handlePopupWatchedClick(film) {
+    this._handleViewAction(
+        UserAction.UPDATE_MOVIE,
+        UpdateType.MINOR,
+        film
+    );
+  }
+
+  _handlePopupFavoriteClick(film) {
+    this._handleViewAction(
+        UserAction.UPDATE_MOVIE,
+        UpdateType.MINOR,
+        film
+    );
+  }
+
+  _handleCardWatchlistClick(film) {
     this._handleViewAction(
         UserAction.UPDATE_MOVIE,
         UpdateType.MINOR,
@@ -277,7 +305,7 @@ export default class MovieListPresenter {
     );
   }
 
-  _handleWatchedClick(film) {
+  _handleCardWatchedClick(film) {
     this._handleViewAction(
         UserAction.UPDATE_MOVIE,
         UpdateType.MINOR,
@@ -291,7 +319,7 @@ export default class MovieListPresenter {
     );
   }
 
-  _handleFavoriteClick(film) {
+  _handleCardFavoriteClick(film) {
     this._handleViewAction(
         UserAction.UPDATE_MOVIE,
         UpdateType.MINOR,

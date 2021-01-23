@@ -34,18 +34,18 @@ export default class Api {
     return this._load({
       url: `comments/${movie.id}`,
       method: Method.POST,
-      body: JSON.stringify(MoviesModel.adaptToServer(movie)),
+      body: JSON.stringify(MoviesModel.adaptCommentToServer(movie)),
       headers: new Headers({"Content-Type": `application/json`})
     })
       .then(Api.toJSON)
-      .then(MoviesModel.adaptToClient);
+      .then(MoviesModel.adaptToClientWithComments);
   }
 
   updateMovie(updateType, movie) {
     return this._load({
       url: `movies/${movie.id}`,
       method: Method.PUT,
-      body: JSON.stringify(MoviesModel.adaptToServer(movie)),
+      body: JSON.stringify(MoviesModel.adaptToServer(movie, true)),
       headers: new Headers({"Content-Type": `application/json`})
     })
       .then(Api.toJSON)
