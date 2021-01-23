@@ -84,9 +84,6 @@ export default class MovieListPresenter {
         break;
       case UserAction.DELETE_COMMENT:
         this._api.deleteComment(updateType, update);
-        // .then((response) => {
-        //   this._moviesModel.updateMovie(updateType, response);
-        // });
         break;
     }
   }

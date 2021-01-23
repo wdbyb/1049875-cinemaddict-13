@@ -204,29 +204,6 @@ export default class Popup extends Smart {
     // myArr.forEach((element) => element.addEventListener(`click`, this._commentDeleteHandler));
   }
 
-
-
-  _commentDeleteHandler(evt) {
-    evt.preventDefault();
-
-    const commentId = evt.target.id;
-    const changedComments = this._comments.filter((item) => item.id !== commentId);
-
-    this._comments = changedComments;
-
-    this.updateData({
-      comments: changedComments
-    });
-
-    this._callback.clickDeleteComment(commentId);
-  }
-
-  setClickHandlerDeleteComment(callback) {
-    this._callback.clickDeleteComment = callback;
-    const myArr = this.getElement().querySelectorAll(`.film-details__comment-delete`);
-    myArr.forEach((element) => element.addEventListener(`click`, this._commentDeleteHandler));
-  }
-
   _scrollTopHandler(evt) {
     evt.preventDefault();
     this.updateData({
@@ -299,6 +276,27 @@ export default class Popup extends Smart {
 
       this._callback.clickOnComment(this._task);
     }
+  }
+
+  _commentDeleteHandler(evt) {
+    evt.preventDefault();
+
+    const commentId = evt.target.id;
+    const changedComments = this._comments.filter((item) => item.id !== commentId);
+
+    this._comments = changedComments;
+
+    this.updateData({
+      comments: changedComments
+    });
+
+    this._callback.clickDeleteComment(commentId);
+  }
+
+  setClickHandlerDeleteComment(callback) {
+    this._callback.clickDeleteComment = callback;
+    const myArr = this.getElement().querySelectorAll(`.film-details__comment-delete`);
+    myArr.forEach((element) => element.addEventListener(`click`, this._commentDeleteHandler));
   }
 
   setClickHandlerOnComment(callback) {
