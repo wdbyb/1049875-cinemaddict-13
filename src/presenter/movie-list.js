@@ -58,6 +58,7 @@ export default class MovieListPresenter {
       case UpdateType.MINOR:
         this._clearMoviesList();
         this._renderMoviesList();
+        this._popup.updateData({comments: data.comments});
         break;
       case UpdateType.MAJOR:
         this._clearMoviesList({something: true});
@@ -177,7 +178,7 @@ export default class MovieListPresenter {
     const cardView = new CardView(film);
 
     cardView.setClickHandlerOnFilm(() => {
-        this._renderPopup(film);
+      this._renderPopup(film);
     });
 
     cardView.setClickHandlerOnWatched(() => {
