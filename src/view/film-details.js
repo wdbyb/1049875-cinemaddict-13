@@ -263,16 +263,12 @@ export default class Popup extends Smart {
     evt.preventDefault();
     if (evt.ctrlKey && evt.key === `Enter`) {
       const newComment = {
-        text: this._task.inputText,
-        emoji: this.getElement().querySelector(`.film-details__emoji-item:checked`).value,
+        comment: this._task.inputText,
+        emotion: this.getElement().querySelector(`.film-details__emoji-item:checked`).value,
         date: generateCommentDate()
       };
 
       this._task.comments.push(newComment);
-
-      // this.updateData({
-      //   comments: this._comments
-      // });
 
       this._callback.clickOnComment(this._task);
     }
@@ -282,13 +278,13 @@ export default class Popup extends Smart {
     evt.preventDefault();
 
     const commentId = evt.target.id;
-    const changedComments = this._comments.filter((item) => item.id !== commentId);
-
-    this._comments = changedComments;
-
-    this.updateData({
-      comments: changedComments
-    });
+    // const changedComments = this._comments.filter((item) => item.id !== commentId);
+    //
+    // this._comments = changedComments;
+    //
+    // this.updateData({
+    //   comments: changedComments
+    // });
 
     this._callback.clickDeleteComment(commentId);
   }

@@ -37,13 +37,13 @@ export default class Movies extends Observer {
         {},
         comment,
         {
-          text: comment.comment,
-          emoji: comment.emotion
+          comment: comment.comment,
+          emotion: comment.emotion
         }
     );
 
-    delete comment.comment;
-    delete comment.emotion;
+    // delete comment.comment;
+    // delete comment.emotion;
 
     return adaptedComment;
   }
@@ -53,8 +53,8 @@ export default class Movies extends Observer {
     const adaptedComment = Object.assign(
         {},
         {
-          comment: lastComment.text,
-          emotion: lastComment.emoji,
+          comment: lastComment.comment,
+          emotion: lastComment.emotion,
           date: lastComment.date
         }
     );

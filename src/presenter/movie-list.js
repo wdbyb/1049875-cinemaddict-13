@@ -58,7 +58,17 @@ export default class MovieListPresenter {
       case UpdateType.MINOR:
         this._clearMoviesList();
         this._renderMoviesList();
-        this._popup.updateData({comments: data.comments});
+        if (this._popup !== null) {
+          this._popup.updateElement();
+        }
+        break;
+      case UpdateType.COMMENTS:
+        this._clearMoviesList();
+        this._renderMoviesList();
+        this._popup.updateData({
+          comments: data.comments,
+          inputText: ``
+        });
         break;
       case UpdateType.MAJOR:
         this._clearMoviesList({something: true});
@@ -257,7 +267,7 @@ export default class MovieListPresenter {
   _handlePopupCommentPost(film) {
     this._handleViewAction(
         UserAction.ADD_COMMENT,
-        UpdateType.MINOR,
+        UpdateType.COMMENTS,
         film
     );
   }
