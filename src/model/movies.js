@@ -138,9 +138,9 @@ export default class Movies extends Observer {
           isFavorite: movie.movie.user_details.favorite,
           alternativeTitle: movie.movie.film_info.alternative_title,
           watchingDate: movie.movie.user_details.watching_date,
-          isDisabled: true,
-          isDeleting: true,
-          isSaving: true
+          isDisabled: false,
+          isDeleting: false,
+          isSaving: false
         }
     );
 
@@ -174,9 +174,9 @@ export default class Movies extends Observer {
           isFavorite: movie.user_details.favorite,
           alternativeTitle: movie.film_info.alternative_title,
           watchingDate: movie.user_details.watching_date,
-          // isDisabled: true,
-          // isDeleting: true,
-          // isSaving: true
+          isDisabled: false,
+          isDeleting: false,
+          isSaving: false
         }
     );
 

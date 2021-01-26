@@ -16,13 +16,13 @@ const createGenresList = (arr) => {
   }).join(``);
 };
 
-const createComments = (arr) => {
+const createComments = (arr, isDisabled, isDeleting) => {
   return arr.map((comment) => {
-    return foo(comment);
+    return foo(comment, isDisabled, isDeleting);
   }).join(``);
 };
 
-const foo = (data) => {
+const foo = (data, isDisabled, isDeleting) => {
   const {author, comment, date, emotion, id} = data;
 
   return `<li class="film-details__comment">
@@ -34,14 +34,14 @@ const foo = (data) => {
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${author}</span>
         <span class="film-details__comment-day">${date}</span>
-        <button class="film-details__comment-delete" id="${id}">Delete</button>
+        <button class="film-details__comment-delete" id="${id}" ${isDisabled ? `disabled` : ``}>${isDeleting ? `Deleting...` : `Delete`}</button>
       </p>
     </div>
   </li>`;
 };
 
 const createFilmDetailsTemplate = (data) => {
-  const {title, poster, rating, duration, year, description, inputText, director, writers, actors, emojiPick, emojiName, genres, age, country, isWatched, isFavorite, isWatchlist, emotion, isDisabled, isSaving, isDeleting} = data;
+  const {title, poster, rating, duration, year, description, inputText, director, writers, actors, emojiPick, emojiName, genres, age, country, isWatched, isFavorite, isWatchlist, isDisabled, isDeleting} = data;
 
   return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -123,7 +123,7 @@ const createFilmDetailsTemplate = (data) => {
           <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${data.comments.length}</span></h3>
 
           <ul class="film-details__comments-list">
-            ${createComments(data.comments)}
+            ${createComments(data.comments, isDisabled, isDeleting)}
           </ul>
 
           <div class="film-details__new-comment">
@@ -132,26 +132,26 @@ const createFilmDetailsTemplate = (data) => {
             </div>
 
             <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${!inputText ? `` : inputText}</textarea>
+              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment" ${isDisabled ? `disabled` : ``}>${!inputText ? `` : inputText}</textarea>
             </label>
 
             <div class="film-details__emoji-list">
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" ${emojiName === `smile` ? `checked` : ``}>
+              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" ${emojiName === `smile` ? `checked` : ``} ${isDisabled ? `disabled` : ``}>
               <label class="film-details__emoji-label" for="emoji-smile">
                 <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
               </label>
 
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping" ${emojiName === `sleeping` ? `checked` : ``}>
+              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping" ${emojiName === `sleeping` ? `checked` : ``} ${isDisabled ? `disabled` : ``}>
               <label class="film-details__emoji-label" for="emoji-sleeping">
                 <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
               </label>
 
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke" ${emojiName === `puke` ? `checked` : ``}>
+              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke" ${emojiName === `puke` ? `checked` : ``} ${isDisabled ? `disabled` : ``}>
               <label class="film-details__emoji-label" for="emoji-puke">
                 <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
               </label>
 
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry" ${emojiName === `angry` ? `checked` : ``}>
+              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry" ${emojiName === `angry` ? `checked` : ``} ${isDisabled ? `disabled` : ``}>
               <label class="film-details__emoji-label" for="emoji-angry">
                 <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
               </label>
@@ -168,7 +168,7 @@ export default class Popup extends Smart {
     super();
     this._task = task;
     this._comments = task.comments;
-    this._deleteComId = null;
+    this._deleteBtnElement = null;
 
     this._clickHandlerOnWatchlist = this._clickHandlerOnWatchlist.bind(this);
     this._clickHandlerOnWatched = this._clickHandlerOnWatched.bind(this);
@@ -245,11 +245,11 @@ export default class Popup extends Smart {
   _clickHandlerOnWatchlist(evt) {
     evt.preventDefault();
     const data = Object.assign(
-      {},
-      this._task,
-      {
-        isWatchlist: !this._task.isWatchlist
-      }
+        {},
+        this._task,
+        {
+          isWatchlist: !this._task.isWatchlist
+        }
     );
 
     this._callback.clickOnWatchlist(data);
@@ -271,11 +271,11 @@ export default class Popup extends Smart {
   _clickHandlerOnFavorite(evt) {
     evt.preventDefault();
     const data = Object.assign(
-      {},
-      this._task,
-      {
-        isFavorite: !this._task.isFavorite
-      }
+        {},
+        this._task,
+        {
+          isFavorite: !this._task.isFavorite
+        }
     );
 
     this._callback.clickOnFavorite(data);
@@ -295,7 +295,7 @@ export default class Popup extends Smart {
   }
 
   _deleteTheComment() {
-    const changedComments = this._comments.filter((item) => item.id !== this._deleteComId);
+    const changedComments = this._comments.filter((item) => item.id !== this._deleteBtnElement.id);
 
     this._comments = changedComments;
 
@@ -307,9 +307,9 @@ export default class Popup extends Smart {
   _commentDeleteHandler(evt) {
     evt.preventDefault();
 
-    this._deleteComId = evt.target.id;
+    this._deleteBtnElement = evt.target;
 
-    this._callback.clickDeleteComment(this._deleteComId);
+    this._callback.clickDeleteComment(this._deleteBtnElement.id);
   }
 
   setPopupState(state) {
