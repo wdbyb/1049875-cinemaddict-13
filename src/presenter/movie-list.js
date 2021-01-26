@@ -3,7 +3,7 @@ import ShowMoreButton from "../view/show-more-button.js";
 import FilmsTopRatedContainer from "../view/films-top-rated-container.js";
 import FilmsMostCommentedContainer from "../view/films-most-commented-container.js";
 import CardView from "../view/film-card.js";
-import PopupView from "../view/film-details.js";
+import PopupView, {State as PopupViewState} from "../view/film-details.js";
 import Sort from "../view/site-filter.js";
 import {MAX_EXTRA_CARD_COUNT, TASKS_COUNT_PER_STEP, UserAction, UpdateType, SortType} from "../constants.js";
 import {render, remove, RenderPosition} from "../utils/render.js";
@@ -58,17 +58,6 @@ export default class MovieListPresenter {
       case UpdateType.MINOR:
         this._clearMoviesList();
         this._renderMoviesList();
-        if (this._popup !== null) {
-          this._popup.updateElement();
-        }
-        break;
-      case UpdateType.COMMENTS:
-        this._clearMoviesList();
-        this._renderMoviesList();
-        this._popup.updateData({
-          comments: data.comments,
-          inputText: ``
-        });
         break;
       case UpdateType.MAJOR:
         this._clearMoviesList({something: true});
@@ -81,20 +70,48 @@ export default class MovieListPresenter {
     }
   }
 
-  _handleViewAction(actionType, updateType, update) {
+  _handleViewAction(actionType, updateType, update, movieId) {
     switch (actionType) {
       case UserAction.UPDATE_MOVIE:
         this._api.updateMovie(updateType, update).then((response) => {
           this._moviesModel.updateMovie(updateType, response);
+          this._popup.updateData({
+            isWatched: response.isWatched,
+            isWatchlist: response.isWatchlist,
+            isFavorite: response.isFavorite
+          });
+        })
+        .catch(() => {
+          this._popup.setPopupState(PopupViewState.ABORTING);
         });
         break;
       case UserAction.ADD_COMMENT:
-        this._api.addComment(updateType, update).then((response) => {
+        this._popup.setPopupState(PopupViewState.SAVING);
+        this._api.addComment(updateType, update, movieId)
+        .then((response) => {
           this._moviesModel.updateMovie(updateType, response);
+          this._popup.updateData({
+            comments: response.comments,
+            inputText: ``,
+            emojiPick: false,
+            emojiName: null
+          });
+          this._popup.setPopupState(PopupViewState.SUCCESS);
+        })
+        .catch(() => {
+          this._popup.setPopupState(PopupViewState.ABORTING);
         });
         break;
       case UserAction.DELETE_COMMENT:
-        this._api.deleteComment(updateType, update);
+        this._popup.setPopupState(PopupViewState.DELETING);
+        this._api.deleteComment(updateType, update)
+        .then(() => {
+          this._popup._deleteTheComment();
+          this._popup.setPopupState(PopupViewState.SUCCESS);
+        })
+        .catch(() => {
+          this._popup.setPopupState(PopupViewState.ABORTING);
+        });
         break;
     }
   }
@@ -264,11 +281,12 @@ export default class MovieListPresenter {
     this._renderShowMoreButton();
   }
 
-  _handlePopupCommentPost(film) {
+  _handlePopupCommentPost(comment, movieId) {
     this._handleViewAction(
         UserAction.ADD_COMMENT,
-        UpdateType.COMMENTS,
-        film
+        UpdateType.MINOR,
+        comment,
+        movieId
     );
   }
 

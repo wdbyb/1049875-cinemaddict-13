@@ -48,19 +48,19 @@ export default class Movies extends Observer {
     return adaptedComment;
   }
 
-  static adaptCommentToServer(film) {
-    const lastComment = film.comments.pop();
-    const adaptedComment = Object.assign(
-        {},
-        {
-          comment: lastComment.comment,
-          emotion: lastComment.emotion,
-          date: lastComment.date
-        }
-    );
-
-    return adaptedComment;
-  }
+  // static adaptCommentToServer(film) {
+  //   const lastComment = film.comments.pop();
+  //   const adaptedComment = Object.assign(
+  //       {},
+  //       {
+  //         comment: lastComment.comment,
+  //         emotion: lastComment.emotion,
+  //         date: lastComment.date
+  //       }
+  //   );
+  //
+  //   return adaptedComment;
+  // }
 
   static adaptToServer(movie, withCommentsId) {
     const adaptedMovies = Object.assign(
@@ -137,7 +137,10 @@ export default class Movies extends Observer {
           isWatchlist: movie.movie.user_details.watchlist,
           isFavorite: movie.movie.user_details.favorite,
           alternativeTitle: movie.movie.film_info.alternative_title,
-          watchingDate: movie.movie.user_details.watching_date
+          watchingDate: movie.movie.user_details.watching_date,
+          isDisabled: true,
+          isDeleting: true,
+          isSaving: true
         }
     );
 
@@ -170,7 +173,10 @@ export default class Movies extends Observer {
           isWatchlist: movie.user_details.watchlist,
           isFavorite: movie.user_details.favorite,
           alternativeTitle: movie.film_info.alternative_title,
-          watchingDate: movie.user_details.watching_date
+          watchingDate: movie.user_details.watching_date,
+          // isDisabled: true,
+          // isDeleting: true,
+          // isSaving: true
         }
     );
 

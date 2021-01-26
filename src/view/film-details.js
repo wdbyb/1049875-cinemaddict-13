@@ -1,8 +1,14 @@
 import Smart from "./smart.js";
 import dayjs from "dayjs";
-import {generateId} from "../utils/common.js";
-import {generateCommentDate, generateCommentAuthor} from "../mock/task.js";
+import {generateCommentDate} from "../mock/task.js";
 import he from "he";
+
+export const State = {
+  SAVING: `SAVING`,
+  DELETING: `DELETING`,
+  ABORTING: `ABORTING`,
+  SUCCESS: `SUCCESS`
+};
 
 const createGenresList = (arr) => {
   return arr.map((genre) => {
@@ -35,7 +41,7 @@ const foo = (data) => {
 };
 
 const createFilmDetailsTemplate = (data) => {
-  const {title, poster, rating, duration, year, description, inputText, director, writers, actors, genres, age, country, isWatched, isFavorite, isWatchlist, emotion} = data;
+  const {title, poster, rating, duration, year, description, inputText, director, writers, actors, emojiPick, emojiName, genres, age, country, isWatched, isFavorite, isWatchlist, emotion, isDisabled, isSaving, isDeleting} = data;
 
   return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -101,14 +107,14 @@ const createFilmDetailsTemplate = (data) => {
         </div>
 
         <section class="film-details__controls">
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${isWatchlist ? `checked` : ``}>
-          <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist-btn" name="watchlist" ${isWatchlist ? `checked` : ``} ${isDisabled ? `disabled` : ``}>
+          <label for="watchlist-btn" class="film-details__control-label">Add to watchlist</label>
 
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${isWatched ? `checked` : ``}>
-          <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${isWatched ? `checked` : ``} ${isDisabled ? `disabled` : ``}>
+          <label for="watched" class="film-details__control-label">Already watched</label>
 
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${isFavorite ? `checked` : ``}>
-          <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${isFavorite ? `checked` : ``} ${isDisabled ? `disabled` : ``}>
+          <label for="favorite" class="film-details__control-label">Add to favorites</label>
         </section>
       </div>
 
@@ -121,29 +127,31 @@ const createFilmDetailsTemplate = (data) => {
           </ul>
 
           <div class="film-details__new-comment">
-            <div class="film-details__add-emoji-label"></div>
+            <div class="film-details__add-emoji-label">
+              ${emojiPick ? `<img src="./images/emoji/${emojiName}.png" width="80" height="80" alt="emoji">` : ``}
+            </div>
 
             <label class="film-details__comment-label">
               <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${!inputText ? `` : inputText}</textarea>
             </label>
 
             <div class="film-details__emoji-list">
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" ${emotion === `smile` ? `checked` : ``}>
+              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" ${emojiName === `smile` ? `checked` : ``}>
               <label class="film-details__emoji-label" for="emoji-smile">
                 <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
               </label>
 
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping" ${emotion === `sleeping` ? `checked` : ``}>
+              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping" ${emojiName === `sleeping` ? `checked` : ``}>
               <label class="film-details__emoji-label" for="emoji-sleeping">
                 <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
               </label>
 
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke" ${emotion === `puke` ? `checked` : ``}>
+              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke" ${emojiName === `puke` ? `checked` : ``}>
               <label class="film-details__emoji-label" for="emoji-puke">
                 <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
               </label>
 
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry" ${emotion === `angry` ? `checked` : ``}>
+              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry" ${emojiName === `angry` ? `checked` : ``}>
               <label class="film-details__emoji-label" for="emoji-angry">
                 <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
               </label>
@@ -160,6 +168,7 @@ export default class Popup extends Smart {
     super();
     this._task = task;
     this._comments = task.comments;
+    this._deleteComId = null;
 
     this._clickHandlerOnWatchlist = this._clickHandlerOnWatchlist.bind(this);
     this._clickHandlerOnWatched = this._clickHandlerOnWatched.bind(this);
@@ -194,14 +203,11 @@ export default class Popup extends Smart {
   _setInnerHandlers() {
     this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, this._descriptionInputHandler);
     this.getElement().addEventListener(`scroll`, this._scrollTopHandler);
-    // this.getElement().querySelector(`#emoji-smile`).addEventListener(`click`, this._emojiToggleHandler);
-    // this.getElement().querySelector(`#emoji-puke`).addEventListener(`click`, this._emojiToggleHandler);
-    // this.getElement().querySelector(`#emoji-angry`).addEventListener(`click`, this._emojiToggleHandler);
-    // this.getElement().querySelector(`#emoji-sleeping`).addEventListener(`click`, this._emojiToggleHandler);
-    // this.getElement().querySelector(`.film-details__inner`).addEventListener(`keyup`, this._commentAddHandler);
-
-    // const myArr = this.getElement().querySelectorAll(`.film-details__comment-delete`);
-    // myArr.forEach((element) => element.addEventListener(`click`, this._commentDeleteHandler));
+    this.getElement().querySelector(`#emoji-smile`).addEventListener(`click`, this._emojiToggleHandler);
+    this.getElement().querySelector(`#emoji-puke`).addEventListener(`click`, this._emojiToggleHandler);
+    this.getElement().querySelector(`#emoji-angry`).addEventListener(`click`, this._emojiToggleHandler);
+    this.getElement().querySelector(`#emoji-sleeping`).addEventListener(`click`, this._emojiToggleHandler);
+    // this.getElement().querySelectorAll(`.film-details__emoji-item`).addEventListener(`click`, this._emojiToggleHandler);
   }
 
   _scrollTopHandler(evt) {
@@ -211,18 +217,19 @@ export default class Popup extends Smart {
     }, true);
   }
 
-  _emojiToggleHandler(evt) {
-    evt.preventDefault();
-    this.updateData({
-      emoji: evt.target.value
-    });
-  }
-
   _descriptionInputHandler(evt) {
     evt.preventDefault();
     this.updateData({
       inputText: evt.target.value
     }, true);
+  }
+
+  _emojiToggleHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      emojiPick: true,
+      emojiName: evt.target.value
+    });
   }
 
   _clickHandlerCloseBtn(evt) {
@@ -237,26 +244,41 @@ export default class Popup extends Smart {
 
   _clickHandlerOnWatchlist(evt) {
     evt.preventDefault();
-    this.updateData({
-      isWatchlist: !this._task.isWatchlist
-    });
-    this._callback.clickOnWatchlist(this._task);
+    const data = Object.assign(
+      {},
+      this._task,
+      {
+        isWatchlist: !this._task.isWatchlist
+      }
+    );
+
+    this._callback.clickOnWatchlist(data);
   }
 
   _clickHandlerOnWatched(evt) {
     evt.preventDefault();
-    this.updateData({
-      isWatched: !this._task.isWatched
-    });
-    this._callback.clickOnWatched(this._task);
+    const data = Object.assign(
+        {},
+        this._task,
+        {
+          isWatched: !this._task.isWatched
+        }
+    );
+
+    this._callback.clickOnWatched(data);
   }
 
   _clickHandlerOnFavorite(evt) {
     evt.preventDefault();
-    this.updateData({
-      isFavorite: !this._task.isFavorite
-    });
-    this._callback.clickOnFavorite(this._task);
+    const data = Object.assign(
+      {},
+      this._task,
+      {
+        isFavorite: !this._task.isFavorite
+      }
+    );
+
+    this._callback.clickOnFavorite(data);
   }
 
   _commentAddHandler(evt) {
@@ -264,35 +286,67 @@ export default class Popup extends Smart {
     if (evt.ctrlKey && evt.key === `Enter`) {
       const newComment = {
         comment: this._task.inputText,
-        emotion: this.getElement().querySelector(`.film-details__emoji-item:checked`).value,
+        emotion: this._task.emojiName,
         date: generateCommentDate()
       };
 
-      this._task.comments.push(newComment);
-
-      this._callback.clickOnComment(this._task);
+      this._callback.clickOnComment(newComment, this._task.id);
     }
+  }
+
+  _deleteTheComment() {
+    const changedComments = this._comments.filter((item) => item.id !== this._deleteComId);
+
+    this._comments = changedComments;
+
+    this.updateData({
+      comments: changedComments
+    });
   }
 
   _commentDeleteHandler(evt) {
     evt.preventDefault();
 
-    const commentId = evt.target.id;
-    // const changedComments = this._comments.filter((item) => item.id !== commentId);
-    //
-    // this._comments = changedComments;
-    //
-    // this.updateData({
-    //   comments: changedComments
-    // });
+    this._deleteComId = evt.target.id;
 
-    this._callback.clickDeleteComment(commentId);
+    this._callback.clickDeleteComment(this._deleteComId);
+  }
+
+  setPopupState(state) {
+    const resetPopupState = () => {
+      this.updateData({
+        isDisabled: false,
+        isDeleting: false,
+        isSaving: false
+      });
+    };
+
+    switch (state) {
+      case State.DELETING:
+        this.updateData({
+          isDisabled: true,
+          isDeleting: true
+        });
+        break;
+      case State.SAVING:
+        this.updateData({
+          isDisabled: true,
+          isSaving: true
+        });
+        break;
+      case State.SUCCESS:
+        resetPopupState();
+        break;
+      case State.ABORTING:
+        this.shake(resetPopupState);
+        break;
+    }
   }
 
   setClickHandlerDeleteComment(callback) {
     this._callback.clickDeleteComment = callback;
-    const myArr = this.getElement().querySelectorAll(`.film-details__comment-delete`);
-    myArr.forEach((element) => element.addEventListener(`click`, this._commentDeleteHandler));
+    const deleteButtons = this.getElement().querySelectorAll(`.film-details__comment-delete`);
+    deleteButtons.forEach((element) => element.addEventListener(`click`, this._commentDeleteHandler));
   }
 
   setClickHandlerOnComment(callback) {
@@ -302,16 +356,16 @@ export default class Popup extends Smart {
 
   setClickHandlerOnWatchlist(callback) {
     this._callback.clickOnWatchlist = callback;
-    this.getElement().querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, this._clickHandlerOnWatchlist);
+    this.getElement().querySelector(`#watchlist-btn`).addEventListener(`click`, this._clickHandlerOnWatchlist);
   }
 
   setClickHandlerOnWatched(callback) {
     this._callback.clickOnWatched = callback;
-    this.getElement().querySelector(`.film-details__control-label--watched`).addEventListener(`click`, this._clickHandlerOnWatched);
+    this.getElement().querySelector(`#watched`).addEventListener(`click`, this._clickHandlerOnWatched);
   }
 
   setClickHandlerOnFavorite(callback) {
     this._callback.clickOnFavorite = callback;
-    this.getElement().querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._clickHandlerOnFavorite);
+    this.getElement().querySelector(`#favorite`).addEventListener(`click`, this._clickHandlerOnFavorite);
   }
 }
