@@ -1,9 +1,20 @@
 import Abstract from "./abstract.js";
 
+const SHAKE_ANIMATION_TIMEOUT = 600;
+
 export default class Smart extends Abstract {
   constructor() {
     super();
     this._task = {};
+    this._comments = {};
+  }
+
+  shake(callback) {
+    this.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    setTimeout(() => {
+      this.getElement().style.animation = ``;
+      callback();
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 
   updateData(update, justDataUpdating) {
@@ -16,6 +27,8 @@ export default class Smart extends Abstract {
         this._task,
         update
     );
+
+    this._comments = this._task.comments;
 
     if (justDataUpdating) {
       return;

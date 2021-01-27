@@ -37,18 +37,15 @@ export default class Movies extends Observer {
         {},
         comment,
         {
-          text: comment.comment,
-          emoji: comment.emotion
+          comment: comment.comment,
+          emotion: comment.emotion
         }
     );
-
-    delete comment.comment;
-    delete comment.emotion;
 
     return adaptedComment;
   }
 
-  static adaptToServer(movie) {
+  static adaptToServer(movie, withCommentsId) {
     const adaptedMovies = Object.assign(
         {},
         {
@@ -80,6 +77,60 @@ export default class Movies extends Observer {
         }
     );
 
+    if (withCommentsId) {
+      const onlyId = (arr) => {
+        const emptyArr = [];
+
+        arr.forEach((comment) => {
+          if (comment !== String(comment)) {
+            emptyArr.push(comment.id);
+          }
+        });
+
+        return emptyArr;
+      };
+
+      adaptedMovies.comments = onlyId(adaptedMovies.comments);
+    }
+
+    return adaptedMovies;
+  }
+
+  static adaptToClientWithComments(movie) {
+    const adaptedMovies = Object.assign(
+        {},
+        movie,
+        {
+          id: movie.movie.id,
+          comments: movie.comments,
+          isAll: true,
+          title: movie.movie.film_info.title,
+          poster: movie.movie.film_info.poster,
+          age: movie.movie.film_info.age_rating,
+          duration: movie.movie.film_info.runtime,
+          rating: movie.movie.film_info.total_rating,
+          year: movie.movie.film_info.release.date,
+          country: movie.movie.film_info.release.release_country,
+          description: movie.movie.film_info.description,
+          director: movie.movie.film_info.director,
+          writers: movie.movie.film_info.writers,
+          actors: movie.movie.film_info.actors,
+          genres: movie.movie.film_info.genre,
+          isWatched: movie.movie.user_details.already_watched,
+          isWatchlist: movie.movie.user_details.watchlist,
+          isFavorite: movie.movie.user_details.favorite,
+          alternativeTitle: movie.movie.film_info.alternative_title,
+          watchingDate: movie.movie.user_details.watching_date,
+          isDisabled: false,
+          isDeleting: false,
+          isSaving: false
+        }
+    );
+
+    delete adaptedMovies.movie;
+    delete adaptedMovies.film_info;
+    delete adaptedMovies.user_details;
+
     return adaptedMovies;
   }
 
@@ -105,7 +156,10 @@ export default class Movies extends Observer {
           isWatchlist: movie.user_details.watchlist,
           isFavorite: movie.user_details.favorite,
           alternativeTitle: movie.film_info.alternative_title,
-          watchingDate: movie.user_details.watching_date
+          watchingDate: movie.user_details.watching_date,
+          isDisabled: false,
+          isDeleting: false,
+          isSaving: false
         }
     );
 

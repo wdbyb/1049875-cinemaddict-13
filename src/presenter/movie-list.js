@@ -3,7 +3,7 @@ import ShowMoreButton from "../view/show-more-button.js";
 import FilmsTopRatedContainer from "../view/films-top-rated-container.js";
 import FilmsMostCommentedContainer from "../view/films-most-commented-container.js";
 import CardView from "../view/film-card.js";
-import PopupView from "../view/film-details.js";
+import PopupView, {State as PopupViewState} from "../view/film-details.js";
 import Sort from "../view/site-filter.js";
 import {MAX_EXTRA_CARD_COUNT, TASKS_COUNT_PER_STEP, UserAction, UpdateType, SortType} from "../constants.js";
 import {render, remove, RenderPosition} from "../utils/render.js";
@@ -16,6 +16,7 @@ export default class MovieListPresenter {
     this._filterModel = filterModel;
     this._api = api;
     this._filmPresenter = {};
+    this._popup = null;
     this._currentSortType = SortType.DEFAULT;
 
     this._renderedFilmsCount = TASKS_COUNT_PER_STEP;
@@ -30,6 +31,11 @@ export default class MovieListPresenter {
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+    this._handlePopupWatchlistClick = this._handlePopupWatchlistClick.bind(this);
+    this._handlePopupFavoriteClick = this._handlePopupFavoriteClick.bind(this);
+    this._handlePopupWatchedClick = this._handlePopupWatchedClick.bind(this);
+    this._handlePopupCommentPost = this._handlePopupCommentPost.bind(this);
+    this._handlePopupCommentDelete = this._handlePopupCommentDelete.bind(this);
 
     this._moviesModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
@@ -64,11 +70,47 @@ export default class MovieListPresenter {
     }
   }
 
-  _handleViewAction(actionType, updateType, update) {
+  _handleViewAction(actionType, updateType, update, movieId) {
     switch (actionType) {
       case UserAction.UPDATE_MOVIE:
         this._api.updateMovie(updateType, update).then((response) => {
           this._moviesModel.updateMovie(updateType, response);
+          this._popup.updateData({
+            isWatched: response.isWatched,
+            isWatchlist: response.isWatchlist,
+            isFavorite: response.isFavorite
+          });
+        })
+        .catch(() => {
+          this._popup.setPopupState(PopupViewState.ABORTING);
+        });
+        break;
+      case UserAction.ADD_COMMENT:
+        this._popup.setPopupState(PopupViewState.SAVING);
+        this._api.addComment(updateType, update, movieId)
+        .then((response) => {
+          this._moviesModel.updateMovie(updateType, response);
+          this._popup.updateData({
+            comments: response.comments,
+            inputText: ``,
+            emojiPick: false,
+            emojiName: null
+          });
+          this._popup.setPopupState(PopupViewState.SUCCESS);
+        })
+        .catch(() => {
+          this._popup.setPopupState(PopupViewState.ABORTING);
+        });
+        break;
+      case UserAction.DELETE_COMMENT:
+        this._popup.setPopupState(PopupViewState.DELETING);
+        this._api.deleteComment(updateType, update)
+        .then(() => {
+          this._popup._deleteTheComment();
+          this._popup.setPopupState(PopupViewState.SUCCESS);
+        })
+        .catch(() => {
+          this._popup.setPopupState(PopupViewState.ABORTING);
         });
         break;
     }
@@ -129,52 +171,53 @@ export default class MovieListPresenter {
   }
 
   _renderPopup(film) {
-    const popup = new PopupView(film);
+    this._api.getComments(film)
+      .then((comments) => {
+        film.comments = comments;
 
-    render(this._bodyElement, popup, RenderPosition.BEFOREEND);
+        const popup = new PopupView(film);
 
-    this._bodyElement.classList.add(`hide-overflow`);
+        this._popup = popup;
 
-    popup.setClickHandlerOnWatched(() => {
-      this._handleWatchedClick(film);
-    });
+        render(this._bodyElement, popup, RenderPosition.BEFOREEND);
 
-    popup.setClickHandlerOnWatchlist(() => {
-      this._handleWatchlistClick(film);
-    });
+        this._bodyElement.classList.add(`hide-overflow`);
 
-    popup.setClickHandlerOnFavorite(() => {
-      this._handleFavoriteClick(film);
-    });
+        popup.setClickHandlerOnWatched(this._handlePopupWatchedClick);
 
-    popup.setClickHandler(() => {
-      remove(popup);
+        popup.setClickHandlerOnWatchlist(this._handlePopupWatchlistClick);
 
-      this._bodyElement.classList.remove(`hide-overflow`);
-    });
+        popup.setClickHandlerOnFavorite(this._handlePopupFavoriteClick);
+
+        popup.setClickHandlerOnComment(this._handlePopupCommentPost);
+
+        popup.setClickHandlerDeleteComment(this._handlePopupCommentDelete);
+
+        popup.setClickHandlerCloseBtn(() => {
+          remove(popup);
+
+          this._bodyElement.classList.remove(`hide-overflow`);
+        });
+      });
   }
 
   _renderCard(container, film) {
     const cardView = new CardView(film);
 
     cardView.setClickHandlerOnFilm(() => {
-      this._api.getComments(film.id)
-        .then((comments) => {
-          film.comments = comments;
-          this._renderPopup(film);
-        });
+      this._renderPopup(film);
     });
 
     cardView.setClickHandlerOnWatched(() => {
-      this._handleWatchedClick(film);
+      this._handleCardWatchedClick(film);
     });
 
     cardView.setClickHandlerOnWatchlist(() => {
-      this._handleWatchlistClick(film);
+      this._handleCardWatchlistClick(film);
     });
 
     cardView.setClickHandlerOnFavorite(() => {
-      this._handleFavoriteClick(film);
+      this._handleCardFavoriteClick(film);
     });
 
     this._filmPresenter[film.id] = cardView;
@@ -238,7 +281,48 @@ export default class MovieListPresenter {
     this._renderShowMoreButton();
   }
 
-  _handleWatchlistClick(film) {
+  _handlePopupCommentPost(comment, movieId) {
+    this._handleViewAction(
+        UserAction.ADD_COMMENT,
+        UpdateType.MINOR,
+        comment,
+        movieId
+    );
+  }
+
+  _handlePopupCommentDelete(comId) {
+    this._handleViewAction(
+        UserAction.DELETE_COMMENT,
+        UpdateType.MINOR,
+        comId
+    );
+  }
+
+  _handlePopupWatchlistClick(film) {
+    this._handleViewAction(
+        UserAction.UPDATE_MOVIE,
+        UpdateType.MINOR,
+        film
+    );
+  }
+
+  _handlePopupWatchedClick(film) {
+    this._handleViewAction(
+        UserAction.UPDATE_MOVIE,
+        UpdateType.MINOR,
+        film
+    );
+  }
+
+  _handlePopupFavoriteClick(film) {
+    this._handleViewAction(
+        UserAction.UPDATE_MOVIE,
+        UpdateType.MINOR,
+        film
+    );
+  }
+
+  _handleCardWatchlistClick(film) {
     this._handleViewAction(
         UserAction.UPDATE_MOVIE,
         UpdateType.MINOR,
@@ -252,7 +336,7 @@ export default class MovieListPresenter {
     );
   }
 
-  _handleWatchedClick(film) {
+  _handleCardWatchedClick(film) {
     this._handleViewAction(
         UserAction.UPDATE_MOVIE,
         UpdateType.MINOR,
@@ -266,7 +350,7 @@ export default class MovieListPresenter {
     );
   }
 
-  _handleFavoriteClick(film) {
+  _handleCardFavoriteClick(film) {
     this._handleViewAction(
         UserAction.UPDATE_MOVIE,
         UpdateType.MINOR,
