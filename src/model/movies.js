@@ -42,25 +42,8 @@ export default class Movies extends Observer {
         }
     );
 
-    // delete comment.comment;
-    // delete comment.emotion;
-
     return adaptedComment;
   }
-
-  // static adaptCommentToServer(film) {
-  //   const lastComment = film.comments.pop();
-  //   const adaptedComment = Object.assign(
-  //       {},
-  //       {
-  //         comment: lastComment.comment,
-  //         emotion: lastComment.emotion,
-  //         date: lastComment.date
-  //       }
-  //   );
-  //
-  //   return adaptedComment;
-  // }
 
   static adaptToServer(movie, withCommentsId) {
     const adaptedMovies = Object.assign(
