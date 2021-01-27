@@ -4,6 +4,10 @@ export const FilterType = {
   HISTORY: `history`,
   FAVORITES: `favorites`
 };
+export const MenuItem = {
+  MOVIES: `all`,
+  STATS: `stats`
+};
 export const NavigationNames = {
   watchlist: `Watchlist`,
   history: `History`,

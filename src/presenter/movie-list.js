@@ -48,6 +48,16 @@ export default class MovieListPresenter {
     this._renderMoviesList();
   }
 
+  hide() {
+    this._movieListComponent.getElement().classList.add(`visually-hidden`);
+    this._sortMoviesComponent.getElement().classList.add(`visually-hidden`);
+  }
+
+  show() {
+    this._movieListComponent.getElement().classList.remove(`visually-hidden`);
+    this._sortMoviesComponent.getElement().classList.remove(`visually-hidden`);
+  }
+
   _handleModelEvent(updateType, data) {
     const filmsContainerElement = this._movieListComponent.getElement().querySelector(`.films-list__container`);
 
