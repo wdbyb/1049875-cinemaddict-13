@@ -22,39 +22,41 @@ const moviesModel = new MoviesModel();
 const filterModel = new FilterModel();
 const movieList = new MovieListPresenter(siteMainElement, moviesModel, filterModel, api);
 const filterPresenter = new FilterPresenter(siteMainElement, filterModel, moviesModel);
-const statsView = new Stats();
 
-const handleSiteMenuClick = (menuItem) => {
-  switch (menuItem) {
-    case MenuItem.STATS:
-      movieList.hide();
-      statsView.show();
-      break;
-    case MenuItem.MOVIES:
-      statsView.hide();
-      document.querySelector(`.main-navigation__additional--active`).classList.remove(`main-navigation__additional--active`);
-      movieList.show();
-      break;
-  }
-};
+
 
 // const foo = (i) => console.log(i);
 
 filterPresenter.init();
 movieList.init();
-// movieList.hide();
+movieList.hide();
 // movieList.show();
-render(siteMainElement, statsView, RenderPosition.BEFOREEND);
-// statsView.hide();
 
-filterPresenter.setMenuClickHandler(handleSiteMenuClick);
 
 api.getMovies()
   .then((movies) => {
+    const handleSiteMenuClick = (menuItem) => {
+      switch (menuItem) {
+        case MenuItem.STATS:
+          movieList.hide();
+          statsView.show();
+          break;
+        case MenuItem.MOVIES:
+          statsView.hide();
+          document.querySelector(`.main-navigation__additional--active`).classList.remove(`main-navigation__additional--active`);
+          movieList.show();
+          break;
+      }
+    };
     moviesModel.setMovies(UpdateType.INIT, movies);
+    const statsView = new Stats(movies);
 
     const profileRating = new ProfileRating();
     const statistics = new Statistics();
+    render(siteMainElement, statsView, RenderPosition.BEFOREEND);
+    // statsView.hide();
+
+    filterPresenter.setMenuClickHandler(handleSiteMenuClick);
 
     render(siteHeaderElement, profileRating, RenderPosition.BEFOREEND);
     render(siteFooterStatisticsElement, statistics, RenderPosition.BEFOREEND);
