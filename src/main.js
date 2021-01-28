@@ -5,9 +5,9 @@ import MovieListPresenter from "./presenter/movie-list.js";
 import MoviesModel from "./model/movies.js";
 import FilterModel from "./model/filter.js";
 import FilterPresenter from "./presenter/filter.js";
+import StatsPresenter from "./presenter/stats.js";
 import Api from "./api.js";
 import {UpdateType, MenuItem} from "./constants.js";
-import Stats from "./view/stats.js";
 
 const AUTHORIZATION = `Basic wl638djdf654yzde`;
 const END_POINT = `https://13.ecmascript.pages.academy/cinemaddict`;
@@ -22,41 +22,43 @@ const moviesModel = new MoviesModel();
 const filterModel = new FilterModel();
 const movieList = new MovieListPresenter(siteMainElement, moviesModel, filterModel, api);
 const filterPresenter = new FilterPresenter(siteMainElement, filterModel, moviesModel);
+const statsPresenter = new StatsPresenter(siteMainElement, moviesModel);
 
-
+const handleSiteMenuClick = (menuItem) => {
+  switch (menuItem) {
+    case MenuItem.STATS:
+      movieList.hide();
+      statsPresenter.show();
+      break;
+    case MenuItem.MOVIES:
+      statsPresenter.hide();
+      document.querySelector(`.main-navigation__additional--active`).classList.remove(`main-navigation__additional--active`);
+      movieList.show();
+      break;
+  }
+};
 
 // const foo = (i) => console.log(i);
 
 filterPresenter.init();
 movieList.init();
-movieList.hide();
+statsPresenter.init();
+// movieList.hide();
 // movieList.show();
+
+// const statsView = new Stats();
+statsPresenter.hide();
+// render(siteMainElement, statsView, RenderPosition.BEFOREEND);
+//
+//
+filterPresenter.setMenuClickHandler(handleSiteMenuClick);
 
 
 api.getMovies()
   .then((movies) => {
-    const handleSiteMenuClick = (menuItem) => {
-      switch (menuItem) {
-        case MenuItem.STATS:
-          movieList.hide();
-          statsView.show();
-          break;
-        case MenuItem.MOVIES:
-          statsView.hide();
-          document.querySelector(`.main-navigation__additional--active`).classList.remove(`main-navigation__additional--active`);
-          movieList.show();
-          break;
-      }
-    };
     moviesModel.setMovies(UpdateType.INIT, movies);
-    const statsView = new Stats(movies);
-
     const profileRating = new ProfileRating();
     const statistics = new Statistics();
-    render(siteMainElement, statsView, RenderPosition.BEFOREEND);
-    // statsView.hide();
-
-    filterPresenter.setMenuClickHandler(handleSiteMenuClick);
 
     render(siteHeaderElement, profileRating, RenderPosition.BEFOREEND);
     render(siteFooterStatisticsElement, statistics, RenderPosition.BEFOREEND);

@@ -85,14 +85,18 @@ export default class MovieListPresenter {
       case UserAction.UPDATE_MOVIE:
         this._api.updateMovie(updateType, update).then((response) => {
           this._moviesModel.updateMovie(updateType, response);
-          this._popup.updateData({
-            isWatched: response.isWatched,
-            isWatchlist: response.isWatchlist,
-            isFavorite: response.isFavorite
-          });
+          if (this._popup !== null) {
+            this._popup.updateData({
+              isWatched: response.isWatched,
+              isWatchlist: response.isWatchlist,
+              isFavorite: response.isFavorite
+            });
+          }
         })
         .catch(() => {
-          this._popup.setPopupState(PopupViewState.ABORTING);
+          if (this._popup !== null) {
+            this._popup.setPopupState(PopupViewState.ABORTING);
+          }
         });
         break;
       case UserAction.ADD_COMMENT:

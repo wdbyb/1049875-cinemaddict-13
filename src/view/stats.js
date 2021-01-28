@@ -53,20 +53,8 @@ const createStatsTemplate = () => {
 };
 
 export default class Stats extends Smart {
-  constructor(movies) {
+  constructor() {
     super();
-
-    this._movies = movies;
-
-    this.renderChart(this._movies);
-  }
-
-  hide() {
-    this.getElement().classList.add(`visually-hidden`);
-  }
-
-  show() {
-    this.getElement().classList.remove(`visually-hidden`);
   }
 
   renderChart(movies) {
@@ -79,9 +67,9 @@ export default class Stats extends Smart {
     const movieByGenreCounts = uniqGenres.map((genre) => countTasksByGenre(movieGenre, genre));
 
     // Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
-    statisticCtx.height = BAR_HEIGHT * 5;
+    statisticCtx.height = BAR_HEIGHT * uniqGenres.length;
 
-    const myChart = new Chart(statisticCtx, {
+    return new Chart(statisticCtx, {
       plugins: [ChartDataLabels],
       type: `horizontalBar`,
       data: {
@@ -90,7 +78,8 @@ export default class Stats extends Smart {
           data: movieByGenreCounts, // Сюда нужно передать в том же порядке количество фильмов по каждому жанру
           backgroundColor: `#ffe800`,
           hoverBackgroundColor: `#ffe800`,
-          anchor: `start`
+          anchor: `start`,
+          barThickness: 24
         }]
       },
       options: {
@@ -116,7 +105,6 @@ export default class Stats extends Smart {
               display: false,
               drawBorder: false
             },
-            barThickness: 24
           }],
           xAxes: [{
             ticks: {
@@ -144,7 +132,7 @@ export default class Stats extends Smart {
   }
 
   getTemplate() {
-    return createStatsTemplate(this._movies);
+    return createStatsTemplate();
   }
 
   restoreHandlers() {
