@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import {FilterType} from "../constants.js";
+import {FilterType, MAX_DAYS_BACK} from "../constants.js";
 
 export const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -12,6 +12,16 @@ export const openBox = (items) => {
   const foo = [];
   items.forEach((item) => item.forEach((i) => foo.push(i)));
   return foo;
+};
+
+const generateDate = () => {
+  const daysGap = getRandomInteger(-MAX_DAYS_BACK, 0);
+
+  return dayjs().add(daysGap, `day`).format(`YYYY/MM/DD HH:mm`);
+};
+
+export const generateCommentDate = () => {
+  return generateDate();
 };
 
 export const makeItemsUniq = (items) => {
