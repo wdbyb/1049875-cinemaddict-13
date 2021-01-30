@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import {FilterType} from "../constants.js";
+import {FilterType, MAX_DAYS_BACK} from "../constants.js";
 
 export const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -12,6 +12,16 @@ export const openBox = (items) => {
   const foo = [];
   items.forEach((item) => item.forEach((i) => foo.push(i)));
   return foo;
+};
+
+const generateDate = () => {
+  const daysGap = getRandomInteger(-MAX_DAYS_BACK, 0);
+
+  return dayjs().add(daysGap, `day`).format(`YYYY/MM/DD HH:mm`);
+};
+
+export const generateCommentDate = () => {
+  return generateDate();
 };
 
 export const makeItemsUniq = (items) => {
@@ -28,26 +38,6 @@ export const filter = {
   [FilterType.HISTORY]: (tasks) => tasks.filter((task) => task.isWatched),
   [FilterType.FAVORITES]: (tasks) => tasks.filter((task) => task.isFavorite)
 };
-
-export const getArrayElement = (arr) => {
-  const randomInteger = getRandomInteger(0, arr.length - 1);
-  return arr[randomInteger];
-};
-
-export const getArrayElements = (arr) => {
-  const randomLength = getRandomInteger(1, arr.length);
-  let elements = [];
-
-  for (let i = 0; i < randomLength; i++) {
-    const randomInteger = getRandomInteger(0, arr.length - 1);
-
-    elements.push(arr[randomInteger]);
-  }
-
-  return elements;
-};
-
-export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
 export const updateItem = (items, update) => {
   const index = items.findIndex((item) => item.id === update.id);

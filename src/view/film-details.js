@@ -1,6 +1,6 @@
 import Smart from "./smart.js";
 import dayjs from "dayjs";
-import {generateCommentDate} from "../mock/task.js";
+import {generateCommentDate} from "../utils/common.js";
 import he from "he";
 
 export const State = {
