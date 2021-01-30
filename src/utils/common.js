@@ -39,26 +39,6 @@ export const filter = {
   [FilterType.FAVORITES]: (tasks) => tasks.filter((task) => task.isFavorite)
 };
 
-export const getArrayElement = (arr) => {
-  const randomInteger = getRandomInteger(0, arr.length - 1);
-  return arr[randomInteger];
-};
-
-export const getArrayElements = (arr) => {
-  const randomLength = getRandomInteger(1, arr.length);
-  let elements = [];
-
-  for (let i = 0; i < randomLength; i++) {
-    const randomInteger = getRandomInteger(0, arr.length - 1);
-
-    elements.push(arr[randomInteger]);
-  }
-
-  return elements;
-};
-
-export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
-
 export const updateItem = (items, update) => {
   const index = items.findIndex((item) => item.id === update.id);
 
