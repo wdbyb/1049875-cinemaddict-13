@@ -207,7 +207,6 @@ export default class Popup extends Smart {
     this.getElement().querySelector(`#emoji-puke`).addEventListener(`click`, this._emojiToggleHandler);
     this.getElement().querySelector(`#emoji-angry`).addEventListener(`click`, this._emojiToggleHandler);
     this.getElement().querySelector(`#emoji-sleeping`).addEventListener(`click`, this._emojiToggleHandler);
-    // this.getElement().querySelectorAll(`.film-details__emoji-item`).addEventListener(`click`, this._emojiToggleHandler);
   }
 
   _scrollTopHandler(evt) {

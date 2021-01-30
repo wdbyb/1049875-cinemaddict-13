@@ -66,16 +66,15 @@ export default class Stats extends Smart {
     const uniqGenres = makeItemsUniq(movieGenre);
     const movieByGenreCounts = uniqGenres.map((genre) => countTasksByGenre(movieGenre, genre));
 
-    // Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
     statisticCtx.height = BAR_HEIGHT * uniqGenres.length;
 
     return new Chart(statisticCtx, {
       plugins: [ChartDataLabels],
       type: `horizontalBar`,
       data: {
-        labels: uniqGenres, // Сюда нужно передать название жанров
+        labels: uniqGenres,
         datasets: [{
-          data: movieByGenreCounts, // Сюда нужно передать в том же порядке количество фильмов по каждому жанру
+          data: movieByGenreCounts,
           backgroundColor: `#ffe800`,
           hoverBackgroundColor: `#ffe800`,
           anchor: `start`,

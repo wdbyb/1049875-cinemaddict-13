@@ -15,9 +15,7 @@ export const openBox = (items) => {
 };
 
 export const makeItemsUniq = (items) => {
-  // const foo = [];
-  // items.forEach((item) => item.forEach((i) => foo.push(i)));
-  return [...new Set(items)]
+  return [...new Set(items)];
 };
 
 export const countTasksByGenre = (movies, genre) => {
