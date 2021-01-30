@@ -5,8 +5,9 @@ import MovieListPresenter from "./presenter/movie-list.js";
 import MoviesModel from "./model/movies.js";
 import FilterModel from "./model/filter.js";
 import FilterPresenter from "./presenter/filter.js";
+import StatsPresenter from "./presenter/stats.js";
 import Api from "./api.js";
-import {UpdateType} from "./constants.js";
+import {UpdateType, MenuItem} from "./constants.js";
 
 const AUTHORIZATION = `Basic wl638djdf654yzde`;
 const END_POINT = `https://13.ecmascript.pages.academy/cinemaddict`;
@@ -21,14 +22,33 @@ const moviesModel = new MoviesModel();
 const filterModel = new FilterModel();
 const movieList = new MovieListPresenter(siteMainElement, moviesModel, filterModel, api);
 const filterPresenter = new FilterPresenter(siteMainElement, filterModel, moviesModel);
+const statsPresenter = new StatsPresenter(siteMainElement, moviesModel);
+
+const handleSiteMenuClick = (menuItem) => {
+  switch (menuItem) {
+    case MenuItem.STATS:
+      movieList.hide();
+      statsPresenter.show();
+      break;
+    case MenuItem.MOVIES:
+      statsPresenter.hide();
+      movieList.show();
+      break;
+  }
+};
 
 filterPresenter.init();
 movieList.init();
+statsPresenter.init();
+
+statsPresenter.hide();
+
+filterPresenter.setMenuClickHandler(handleSiteMenuClick);
+
 
 api.getMovies()
   .then((movies) => {
     moviesModel.setMovies(UpdateType.INIT, movies);
-
     const profileRating = new ProfileRating();
     const statistics = new Statistics();
 

@@ -8,6 +8,20 @@ export const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
+export const openBox = (items) => {
+  const foo = [];
+  items.forEach((item) => item.forEach((i) => foo.push(i)));
+  return foo;
+};
+
+export const makeItemsUniq = (items) => {
+  return [...new Set(items)];
+};
+
+export const countTasksByGenre = (movies, genre) => {
+  return movies.filter((movie) => movie === genre).length;
+};
+
 export const filter = {
   [FilterType.ALL]: (tasks) => tasks.filter((task) => task.isAll),
   [FilterType.WATCHLIST]: (tasks) => tasks.filter((task) => task.isWatchlist),

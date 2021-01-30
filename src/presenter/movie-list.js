@@ -8,6 +8,7 @@ import Sort from "../view/site-filter.js";
 import {MAX_EXTRA_CARD_COUNT, TASKS_COUNT_PER_STEP, UserAction, UpdateType, SortType} from "../constants.js";
 import {render, remove, RenderPosition} from "../utils/render.js";
 import {filter} from "../utils/common.js";
+import dayjs from "dayjs";
 
 export default class MovieListPresenter {
   constructor(movieContainer, moviesModel, filterModel, api) {
@@ -48,6 +49,16 @@ export default class MovieListPresenter {
     this._renderMoviesList();
   }
 
+  hide() {
+    this._movieListComponent.getElement().classList.add(`visually-hidden`);
+    this._sortMoviesComponent.getElement().classList.add(`visually-hidden`);
+  }
+
+  show() {
+    this._movieListComponent.getElement().classList.remove(`visually-hidden`);
+    this._sortMoviesComponent.getElement().classList.remove(`visually-hidden`);
+  }
+
   _handleModelEvent(updateType, data) {
     const filmsContainerElement = this._movieListComponent.getElement().querySelector(`.films-list__container`);
 
@@ -75,14 +86,18 @@ export default class MovieListPresenter {
       case UserAction.UPDATE_MOVIE:
         this._api.updateMovie(updateType, update).then((response) => {
           this._moviesModel.updateMovie(updateType, response);
-          this._popup.updateData({
-            isWatched: response.isWatched,
-            isWatchlist: response.isWatchlist,
-            isFavorite: response.isFavorite
-          });
+          if (this._popup !== null) {
+            this._popup.updateData({
+              isWatched: response.isWatched,
+              isWatchlist: response.isWatchlist,
+              isFavorite: response.isFavorite
+            });
+          }
         })
         .catch(() => {
-          this._popup.setPopupState(PopupViewState.ABORTING);
+          if (this._popup !== null) {
+            this._popup.setPopupState(PopupViewState.ABORTING);
+          }
         });
         break;
       case UserAction.ADD_COMMENT:
@@ -125,7 +140,7 @@ export default class MovieListPresenter {
       case SortType.DEFAULT:
         return filtredTasks;
       case SortType.DATE:
-        return filtredTasks.sort((a, b) => b.year - a.year);
+        return filtredTasks.sort((a, b) => dayjs(b.year).format(`YYYY`) - dayjs(a.year).format(`YYYY`));
       case SortType.RATING:
         return filtredTasks.sort((a, b) => b.rating - a.rating);
     }

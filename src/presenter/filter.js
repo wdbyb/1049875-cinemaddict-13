@@ -9,11 +9,13 @@ export default class Filter {
     this._filterModel = filterModel;
     this._tasksModel = tasksModel;
     this._currentFilter = null;
+    this._callback = {};
 
     this._filterComponent = null;
 
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
+    this._handleMenuChange = this._handleMenuChange.bind(this);
 
     this._tasksModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
@@ -27,6 +29,7 @@ export default class Filter {
 
     this._filterComponent = new MainNavigation(filters, this._currentFilter);
     this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
+    this._filterComponent.setMenuClickHandler(this._handleMenuChange);
 
     if (prevFilterComponent === null) {
       render(this._filterContainer, this._filterComponent, RenderPosition.BEFOREEND);
@@ -39,6 +42,14 @@ export default class Filter {
 
   _handleModelEvent() {
     this.init();
+  }
+
+  _handleMenuChange(foo) {
+    this._callback.menuClick(foo);
+  }
+
+  setMenuClickHandler(callback) {
+    this._callback.menuClick = callback;
   }
 
   _handleFilterTypeChange(filterType) {
