@@ -8,6 +8,7 @@ import Sort from "../view/site-filter.js";
 import {MAX_EXTRA_CARD_COUNT, TASKS_COUNT_PER_STEP, UserAction, UpdateType, SortType} from "../constants.js";
 import {render, remove, RenderPosition} from "../utils/render.js";
 import {filter} from "../utils/common.js";
+import dayjs from "dayjs";
 
 export default class MovieListPresenter {
   constructor(movieContainer, moviesModel, filterModel, api) {
@@ -139,7 +140,7 @@ export default class MovieListPresenter {
       case SortType.DEFAULT:
         return filtredTasks;
       case SortType.DATE:
-        return filtredTasks.sort((a, b) => b.year - a.year);
+        return filtredTasks.sort((a, b) => dayjs(b.year).format(`YYYY`) - dayjs(a.year).format(`YYYY`));
       case SortType.RATING:
         return filtredTasks.sort((a, b) => b.rating - a.rating);
     }

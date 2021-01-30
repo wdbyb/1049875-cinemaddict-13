@@ -4,7 +4,7 @@ import {MenuItem} from "../constants.js";
 const createMainNavigationItem = (filter, currentFilterType) => {
   const {type, name, count} = filter;
 
-  return (`<a id="${type}" href="#${name}" class="main-navigation__item main-navigation__item${type === currentFilterType ? `--active` : ``}">${name} <span class="main-navigation__item-count">${count}</span></a>`);
+  return (`<a id="${type}" href="#${name}" class="main-navigation__item main-navigation__item${type === currentFilterType ? `--active` : ``}">${name} ${name === `All movies` ? `` : `<span class="main-navigation__item-count">${count}</span>`}</a>`);
 };
 
 const createMainNavigationTemplate = (filterItems, currentFilterType) => {

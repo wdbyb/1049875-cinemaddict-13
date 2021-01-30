@@ -32,25 +32,17 @@ const handleSiteMenuClick = (menuItem) => {
       break;
     case MenuItem.MOVIES:
       statsPresenter.hide();
-      document.querySelector(`.main-navigation__additional--active`).classList.remove(`main-navigation__additional--active`);
       movieList.show();
       break;
   }
 };
 
-// const foo = (i) => console.log(i);
-
 filterPresenter.init();
 movieList.init();
 statsPresenter.init();
-// movieList.hide();
-// movieList.show();
 
-// const statsView = new Stats();
 statsPresenter.hide();
-// render(siteMainElement, statsView, RenderPosition.BEFOREEND);
-//
-//
+
 filterPresenter.setMenuClickHandler(handleSiteMenuClick);
 
 

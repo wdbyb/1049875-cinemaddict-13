@@ -33,6 +33,9 @@ export default class StatsPresenter {
 
   hide() {
     this._statsComponent.getElement().classList.add(`visually-hidden`);
+    if (document.querySelector(`.main-navigation__additional`).classList.contains(`main-navigation__additional--active`)) {
+      document.querySelector(`.main-navigation__additional`).classList.remove(`main-navigation__additional--active`);
+    }
   }
 
   show() {
