@@ -1,9 +1,9 @@
 import Smart from "./smart.js";
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import {countTasksByGenre, makeItemsUniq, openBox} from "../utils/common.js";
 
-const createStatsTemplate = () => {
+const createStatsTemplate = (watchedMovies, totalDuration, mostWatchedGenre) => {
+
   return `<section class="statistic">
     <p class="statistic__rank">
       Your rank
@@ -33,15 +33,15 @@ const createStatsTemplate = () => {
     <ul class="statistic__text-list">
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">You watched</h4>
-        <p class="statistic__item-text">22 <span class="statistic__item-description">movies</span></p>
+        <p class="statistic__item-text">${watchedMovies ? watchedMovies.length : `0`} <span class="statistic__item-description">movies</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
-        <p class="statistic__item-text">130 <span class="statistic__item-description">h</span> 22 <span class="statistic__item-description">m</span></p>
+        <p class="statistic__item-text">${totalDuration ? totalDuration.HOURS : `0`} <span class="statistic__item-description">h</span> ${totalDuration ? totalDuration.MINUTES : `0`} <span class="statistic__item-description">m</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Top genre</h4>
-        <p class="statistic__item-text">Sci-Fi</p>
+        <p class="statistic__item-text">${mostWatchedGenre ? mostWatchedGenre : `Вы что тютю?!`}</p>
       </li>
     </ul>
 
@@ -53,18 +53,37 @@ const createStatsTemplate = () => {
 };
 
 export default class Stats extends Smart {
-  constructor() {
+  constructor(watchedMovies, totalDuration, mostWatchedGenre) {
     super();
+
+    this._watchedMovies = watchedMovies;
+    this._totalDuration = totalDuration;
+    this._mostWatchedGenre = mostWatchedGenre;
+
+    this._clickHandlerStatisticFilter = this._clickHandlerStatisticFilter.bind(this);
   }
 
-  renderChart(movies) {
+  restoreHandlers() {
+
+  }
+
+  _clickHandlerStatisticFilter(evt) {
+    evt.preventDefault();
+    this._callback.filterClick();
+  }
+
+  setStatisticFilterClickHandler(callback) {
+    this._callback.filterClick = callback;
+    this.getElement().querySelectorAll(`.statistic__filters-input`).forEach((input) => input.addEventListener(`click`, this._clickHandlerStatisticFilter));
+  }
+
+  getTemplate() {
+    return createStatsTemplate(this._watchedMovies, this._totalDuration, this._mostWatchedGenre);
+  }
+
+  renderChart(uniqGenres, movieByGenreCounts) {
     const BAR_HEIGHT = 50;
     const statisticCtx = this.getElement().querySelector(`.statistic__chart`);
-    const watchedMovies = movies.filter((movie) => movie.isWatched);
-    const movieGenres = watchedMovies.map((movie) => movie.genres);
-    const movieGenre = openBox(movieGenres);
-    const uniqGenres = makeItemsUniq(movieGenre);
-    const movieByGenreCounts = uniqGenres.map((genre) => countTasksByGenre(movieGenre, genre));
 
     statisticCtx.height = BAR_HEIGHT * uniqGenres.length;
 
@@ -128,13 +147,5 @@ export default class Stats extends Smart {
 
   removeElement() {
     super.removeElement();
-  }
-
-  getTemplate() {
-    return createStatsTemplate();
-  }
-
-  restoreHandlers() {
-
   }
 }
