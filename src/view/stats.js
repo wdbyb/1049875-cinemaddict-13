@@ -1,6 +1,7 @@
 import Smart from "./smart.js";
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import {StatsColorPalitre, StatsOptions} from "../constants.js";
 
 const createStatsTemplate = (watchedMovies, totalDuration, mostWatchedGenre) => {
 
@@ -63,10 +64,6 @@ export default class Stats extends Smart {
     this._clickHandlerStatisticFilter = this._clickHandlerStatisticFilter.bind(this);
   }
 
-  restoreHandlers() {
-
-  }
-
   _clickHandlerStatisticFilter(evt) {
     evt.preventDefault();
     this._callback.filterClick();
@@ -82,10 +79,9 @@ export default class Stats extends Smart {
   }
 
   renderChart(uniqGenres, movieByGenreCounts) {
-    const BAR_HEIGHT = 50;
     const statisticCtx = this.getElement().querySelector(`.statistic__chart`);
 
-    statisticCtx.height = BAR_HEIGHT * uniqGenres.length;
+    statisticCtx.height = StatsOptions.BAR_HEIGHT * uniqGenres.length;
 
     return new Chart(statisticCtx, {
       plugins: [ChartDataLabels],
@@ -94,30 +90,30 @@ export default class Stats extends Smart {
         labels: uniqGenres,
         datasets: [{
           data: movieByGenreCounts,
-          backgroundColor: `#ffe800`,
-          hoverBackgroundColor: `#ffe800`,
+          backgroundColor: StatsColorPalitre.HORIZONTAL_BAR,
+          hoverBackgroundColor: StatsColorPalitre.HORIZONTAL_BAR_HOVER,
           anchor: `start`,
-          barThickness: 24
+          barThickness: StatsOptions.BAR_THICKNESS
         }]
       },
       options: {
         plugins: {
           datalabels: {
             font: {
-              size: 20
+              size: StatsOptions.FONT_SIZE
             },
-            color: `#ffffff`,
+            color: StatsColorPalitre.TEXT_COLOR,
             anchor: `start`,
             align: `start`,
-            offset: 40,
+            offset: StatsOptions.OFFSET,
           }
         },
         scales: {
           yAxes: [{
             ticks: {
-              fontColor: `#ffffff`,
-              padding: 100,
-              fontSize: 20
+              fontColor: StatsColorPalitre.TEXT_COLOR,
+              padding: StatsOptions.PADDING,
+              fontSize: StatsOptions.FONT_SIZE
             },
             gridLines: {
               display: false,
