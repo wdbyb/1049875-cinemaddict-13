@@ -4,9 +4,31 @@ export const FilterType = {
   HISTORY: `history`,
   FAVORITES: `favorites`
 };
+export const StatsFilter = {
+  ALL: `statistic-all-time`,
+  TODAY: `statistic-today`,
+  WEEK: `statistic-week`,
+  MONTH: `statistic-month`,
+  YEAR: `statistic-year`
+};
+export const StatsColorPalitre = {
+  HORIZONTAL_BAR: `#ffe800`,
+  HORIZONTAL_BAR_HOVER: `#ffe800`,
+  TEXT_COLOR: `#ffffff`
+};
+export const StatsOptions = {
+  PADDING: 100,
+  OFFSET: 40,
+  FONT_SIZE: 20,
+  BAR_THICKNESS: 24,
+  BAR_HEIGHT: 50
+};
 export const MenuItem = {
   MOVIES: `all`,
-  STATS: `stats`
+  STATS: `stats`,
+  WATCHLIST: `watchlist`,
+  HISTORY: `history`,
+  FAVORITES: `favorites`
 };
 export const NavigationNames = {
   watchlist: `Watchlist`,

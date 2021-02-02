@@ -30,6 +30,18 @@ const handleSiteMenuClick = (menuItem) => {
       movieList.hide();
       statsPresenter.show();
       break;
+    case MenuItem.FAVORITES:
+      statsPresenter.hide();
+      movieList.show();
+      break;
+    case MenuItem.HISTORY:
+      statsPresenter.hide();
+      movieList.show();
+      break;
+    case MenuItem.WATCHLIST:
+      statsPresenter.hide();
+      movieList.show();
+      break;
     case MenuItem.MOVIES:
       statsPresenter.hide();
       movieList.show();

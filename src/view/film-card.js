@@ -51,7 +51,6 @@ export default class Card extends Abstract {
   _clickHandlerOnFavorite(evt) {
     evt.preventDefault();
     this._callback.clickOnFavorite();
-
   }
 
   setClickHandlerOnWatchlist(callback) {
