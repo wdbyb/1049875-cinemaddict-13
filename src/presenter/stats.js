@@ -2,17 +2,12 @@ import Stats from "../view/stats.js";
 import {render, RenderPosition} from "../utils/render.js";
 import {countTasksByGenre, makeItemsUniq, openBox} from "../utils/common.js";
 import dayjs from "dayjs";
+import {StatsFilter} from "../constants.js";
 
-// const heyHo = (yuu, dateFrom, dateTo) => {
-//   console.log(yuu[0].watchingDate);
-//   const i = dayjs(dateFrom).format(`D MMMM YYYY`);
-//   const o = dayjs(dateTo).format(`D MMMM YYYY`);
-//   const e = yuu[0].watchingDate;
-//   const u = dayjs(e).format(`D MMMM YYYY`);
-//   if (dayjs(u).isBetween(i, o)) {
-//     console.log(1);
-//   }
-// };
+const filterByStartDate = (movies, startPoint) => {
+  startPoint = startPoint.startOf(`day`);
+  return movies.filter((movie) => dayjs(movie.watchingDate).isAfter(startPoint));
+};
 
 export default class StatsPresenter {
   constructor(statsContainer, moviesModel) {
@@ -27,39 +22,43 @@ export default class StatsPresenter {
       MINUTES: 0
     };
     this._watchedMovies = null;
-    this._watchedForSomePeriod = null;
 
     this._statsComponent = new Stats();
 
     this._handleModelEvent = this._handleModelEvent.bind(this);
-    this._ffo = this._ffo.bind(this);
+    this._statsFilterHandler = this._statsFilterHandler.bind(this);
 
     this._moviesModel.addObserver(this._handleModelEvent);
   }
 
   init() {
     render(this._statsContainer, this._statsComponent, RenderPosition.BEFOREEND);
-    this._statsComponent.setStatisticFilterClickHandler(this._ffo);
+    this._statsComponent.setStatisticFilterClickHandler(this._statsFilterHandler);
   }
 
-  _ffo(statsFilter) {
+  _statsFilterHandler(statsFilter) {
     switch (statsFilter) {
       case StatsFilter.ALL:
-        this.renderChart();
+        this._watchedMovies = this._movies.filter((movie) => movie.isWatched);
         break;
       case StatsFilter.TODAY:
-        this.renderChart();
+        this._watchedMovies = filterByStartDate(this._movies, dayjs().subtract(1, `day`));
         break;
       case StatsFilter.WEEK:
-        this.renderChart();
+        this._watchedMovies = filterByStartDate(this._movies, dayjs().subtract(1, `week`));
         break;
       case StatsFilter.MONTH:
-        this.renderChart();
+        this._watchedMovies = filterByStartDate(this._movies, dayjs().subtract(1, `month`));
         break;
       case StatsFilter.YEAR:
-        this.renderChart();
+        this._watchedMovies = filterByStartDate(this._movies, dayjs().subtract(1, `year`));
         break;
     }
+    this._getGenres(this._watchedMovies);
+    this._countHoursAndMinutes();
+    this._statsComponent.changeInfo(this._watchedMovies, this._totalDuration, this._mostWatchedGenre, statsFilter);
+    this._statsComponent.updateElement();
+    this.renderChart();
   }
 
   _handleModelEvent() {

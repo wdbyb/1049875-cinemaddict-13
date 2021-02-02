@@ -4,6 +4,13 @@ export const FilterType = {
   HISTORY: `history`,
   FAVORITES: `favorites`
 };
+export const StatsFilter = {
+  ALL: `statistic-all-time`,
+  TODAY: `statistic-today`,
+  WEEK: `statistic-week`,
+  MONTH: `statistic-month`,
+  YEAR: `statistic-year`
+};
 export const StatsColorPalitre = {
   HORIZONTAL_BAR: `#ffe800`,
   HORIZONTAL_BAR_HOVER: `#ffe800`,
